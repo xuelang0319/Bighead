@@ -10,7 +10,7 @@
 //
 // -------------------------------------------------------------------------------------
 
-using BigHead.Customer;
+using BigHead.Editor.Customer;
 using UnityEditor;
 using UnityEngine;
 
