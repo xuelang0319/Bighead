@@ -7,6 +7,7 @@
 //  Eric    |  2020年12月24日  |   1、 Assembly.GetCallingAssembly() 修改为 Type.Assembly 以解决当调用程序和检索类不在同一程序集时获取为空的问题。
 //                            |   2、 添加HasImplementedRawGeneric方法，以获取继承泛型和接口的子类。
 //  Eric    |  2020年01月13日  |   新增XML序列化方法。
+//  Eric    |  2020年01月13日  |   新增序列化方法,整合序列化参数验证代码。
 //
 
 using System;
@@ -14,6 +15,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml.Serialization;
 using BigHead.Framework.Extension;
 
@@ -77,6 +80,39 @@ namespace BigHead.Framework.Utility.Helper
         }
 
         /// <summary>
+        /// 二进制序列化类
+        /// </summary>
+        /// <param name="c">
+        /// 需要进行Xml序列化的类。
+        /// 1、需添加Serializer特性
+        /// 2、序列化的属性需要添加Xml类型特性。如: [XmlElement]
+        /// </param>
+        /// <returns>
+        /// 序列化结果，当序列化失败时返回string.Empty
+        /// </returns>
+        public static string StartSerializer<T>(this T c) where T : class, new()
+        {
+            if (!CheckSerializerParam(c)) return string.Empty;
+            try
+            {
+                using (var stream = new MemoryStream())
+                {
+                    IFormatter formatter = new BinaryFormatter();
+                    formatter.Serialize(stream, c);
+                    stream.Position = 0;
+                    var buffer = new byte[stream.Length];
+                    stream.Read(buffer, 0, buffer.Length);
+                    return Convert.ToBase64String(buffer);
+                }
+            }
+            catch (Exception e)
+            {
+                $"[序列化错误]: {e.Message}".Exception();
+                return string.Empty;
+            }
+        }
+
+        /// <summary>
         /// Xml序列化
         /// </summary>
         /// <param name="xmlClass">
@@ -84,25 +120,13 @@ namespace BigHead.Framework.Utility.Helper
         /// 1、需添加Serializer特性
         /// 2、序列化的属性需要添加Xml类型特性。如: [XmlElement]
         /// </param>
-        /// <typeparam name="T"></typeparam>
         public static void StartXmlSerializer<T>(this T xmlClass, string path) where T : class, new()
         {
-            if (Equals(xmlClass, null))
-            {
-                "[序列化错误] 传入参数类为空。".Exception();
-                return;
-            }
-
-            var type = xmlClass.GetType();
-            if ((type.Attributes & TypeAttributes.Serializable) == 0)
-            {
-                $"[序列化错误] 传入参数类型类 {type.Name} 未使用Serializable标签。".Exception();
-                return;
-            }
-
+            if (!CheckSerializerParam(xmlClass)) return;
+            
             try
             {
-                var serializer = new XmlSerializer(type);
+                var serializer = new XmlSerializer(xmlClass.GetType());
                 using (Stream s = File.Create(path))
                 {
                     serializer.Serialize(s, xmlClass);
@@ -112,6 +136,27 @@ namespace BigHead.Framework.Utility.Helper
             {
                 $"[序列化错误] 传入路径错误 {path}。".Exception();
             }
+        }
+
+        /// <summary>
+        /// 校验序列化参数
+        /// </summary>
+        private static bool CheckSerializerParam<T>(T c) where T : class, new()
+        {
+            if (Equals(c, null))
+            {
+                "[序列化错误] 传入参数类为空。".Exception();
+                return false;
+            }
+
+            var type = c.GetType();
+            if ((type.Attributes & TypeAttributes.Serializable) == 0)
+            {
+                $"[序列化错误] 传入参数类型类 {type.Name} 未使用Serializable标签。".Exception();
+                return false;
+            }
+
+            return true;
         }
     }
 }
