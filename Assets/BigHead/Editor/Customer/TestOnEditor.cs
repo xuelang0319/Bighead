@@ -6,12 +6,13 @@
 //  Eric    |  2021年1月8日    |   编辑器模式下测试方法，可以直接在拓展ICON中红色圆圈图标按钮下调用
 //
 
-namespace BigHead.Customer
+namespace BigHead.Editor.Customer
 {
     public static class TestOnEditor
     {
         public static void CustomFoo()
         {
+            
         }
     }
 }
