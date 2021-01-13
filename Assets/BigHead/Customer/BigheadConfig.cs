@@ -8,7 +8,7 @@
 
 namespace BigHead.Customer
 {
-    public static class BigHeadConfig
+    public static class BigheadConfig
     {
         
     }
