@@ -338,7 +338,7 @@ namespace BigHead.Framework.Net.NetSocket
                             LastPing = DateTime.UtcNow;
                             Handlers[handlerType].Invoke(data);
                         }
-                        catch (Exception e)
+                        catch
                         {
                             $"没有找到对应的Socket处理器， HandlerType: {(SocketHandlerTypes) handlerType}".Exception();
                         }
