@@ -1,5 +1,5 @@
 ﻿//
-// = The script is part of BigHead and the framework is individually owned by Eric Lee.
+// = The script is part of Bighead and the framework is individually owned by Eric Lee.
 // = Cannot be commercially used without the authorization.
 //
 //  Author  |  UpdateTime     |   Desc  
