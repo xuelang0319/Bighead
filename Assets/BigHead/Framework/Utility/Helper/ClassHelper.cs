@@ -6,13 +6,16 @@
 //  Eric    |  2020年12月18日  |   类帮助器
 //  Eric    |  2020年12月24日  |   1、 Assembly.GetCallingAssembly() 修改为 Type.Assembly 以解决当调用程序和检索类不在同一程序集时获取为空的问题。
 //                            |   2、 添加HasImplementedRawGeneric方法，以获取继承泛型和接口的子类。
+//  Eric    |  2020年01月13日  |   新增XML序列化方法。
 //
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using JetBrains.Annotations;
+using System.Xml.Serialization;
+using BigHead.Framework.Extension;
 
 namespace BigHead.Framework.Utility.Helper
 {
@@ -71,6 +74,44 @@ namespace BigHead.Framework.Utility.Helper
             
             bool IsTheRawGenericType(Type test)
                 => generic == (test.IsGenericType ? test.GetGenericTypeDefinition() : test);
+        }
+
+        /// <summary>
+        /// Xml序列化
+        /// </summary>
+        /// <param name="xmlClass">
+        /// 需要进行Xml序列化的类。
+        /// 1、需添加Serializer特性
+        /// 2、序列化的属性需要添加Xml类型特性。如: [XmlElement]
+        /// </param>
+        /// <typeparam name="T"></typeparam>
+        public static void StartXmlSerializer<T>(this T xmlClass, string path) where T : class, new()
+        {
+            if (Equals(xmlClass, null))
+            {
+                "[序列化错误] 传入参数类为空。".Exception();
+                return;
+            }
+
+            var type = xmlClass.GetType();
+            if ((type.Attributes & TypeAttributes.Serializable) == 0)
+            {
+                $"[序列化错误] 传入参数类型类 {type.Name} 未使用Serializable标签。".Exception();
+                return;
+            }
+
+            try
+            {
+                var serializer = new XmlSerializer(type);
+                using (Stream s = File.Create(path))
+                {
+                    serializer.Serialize(s, xmlClass);
+                }
+            }
+            catch
+            {
+                $"[序列化错误] 传入路径错误 {path}。".Exception();
+            }
         }
     }
 }
