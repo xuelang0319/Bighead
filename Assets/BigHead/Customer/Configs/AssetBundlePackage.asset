@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76599abaeaf5fc848807ef98886535ff, type: 3}
   m_Name: AssetBundlePackage
   m_EditorClassIdentifier: 
-  ResPath: GameData
+  ResPath: Editor/Projects
