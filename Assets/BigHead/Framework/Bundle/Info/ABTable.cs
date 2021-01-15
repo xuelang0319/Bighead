@@ -3,18 +3,17 @@
 // = Cannot be commercially used without the authorization.
 //
 //  Author  |  UpdateTime     |   Desc  
-//  Eric    |  2021年1月13日   |   打包汇总清单
+//  Eric    |  2021年1月15日   |   AssetInfo及BundleInfo总表
 //
 
-using System;
 using System.Collections.Generic;
 
 namespace BigHead.Framework.Bundle.Info
 {
-    [Serializable]
-    public class BundleTable
+    public class ABTable
     {
         public int Version { get; set; }
+        public List<AssetInfo> AssetsInfo { get; set; }
         public List<BundleInfo> BundleInfos { get; set; }
     }
 }
