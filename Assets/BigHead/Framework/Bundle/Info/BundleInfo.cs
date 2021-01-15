@@ -15,8 +15,6 @@ namespace BigHead.Framework.Bundle.Info
     {
         public string Path { get; set; }
 
-        public string Name { get; set; }
-
         public int Version { get; set; }
 
         public string CheckCode { get; set; }
