@@ -21,15 +21,15 @@ namespace BigHead.Framework.Utility.Readers
             {
                 using (var stream = info.OpenRead())
                 {
-                    byte[] buffer = new byte[stream.Length];
-                    int length = stream.Read(buffer, 0, buffer.Length);
+                    var buffer = new byte[stream.Length];
+                    var length = stream.Read(buffer, 0, buffer.Length);
                     return Encoding.UTF8.GetString(buffer, 0, length);
                 }
             }
             catch (Exception e)
             {
                 e.Exception();
-                return String.Empty;
+                return string.Empty;
             }
         }
     }
