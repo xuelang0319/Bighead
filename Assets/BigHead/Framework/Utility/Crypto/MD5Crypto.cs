@@ -9,7 +9,6 @@
 using System;
 using System.Security.Cryptography;
 using System.Text;
-using BigHead.Asset;
 
 namespace BigHead.Framework.Utility.Crypto
 {
@@ -25,13 +24,14 @@ namespace BigHead.Framework.Utility.Crypto
         /// </summary>
         /// <param name="input">输入</param>
         /// <param name="hasSalt">是否进行加密化处理</param>
+        /// <param name="preSalt"></param>
+        /// <param name="postSalt"></param>
         /// <returns>输出</returns>
-        public static string MD5Encode(string input, bool hasSalt = false)
+        public static string MD5Encode(string input, bool hasSalt = false, string preSalt = "", string postSalt = "")
         {
             if (hasSalt)
             {
-                var config = Asset.AssetCrypto.Config;
-                input = $"{config.MD5PreSalt}{input}{config.MD5PostSalt}";
+                input = $"{preSalt}{input}{postSalt}";
             }
 
             var data = MD5Provider.ComputeHash(Encoding.UTF8.GetBytes(input));
