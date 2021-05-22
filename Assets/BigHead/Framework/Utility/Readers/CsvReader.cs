@@ -9,7 +9,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using BigHead.Framework.Extension;
+using BigHead.Framework.Core;
 
 namespace BigHead.Framework.Utility.Readers
 {
@@ -50,7 +50,7 @@ namespace BigHead.Framework.Utility.Readers
             var tempStrs = str.Split('\n');
             if (tempStrs.Length <= deleteLineCount)
             {
-                Log.Error($"操作失败，数据行数不足 {deleteLineCount} 行，请检查。 传入字符串： {str}");
+                $"操作失败，数据行数不足 {deleteLineCount} 行，请检查。 传入字符串： {str}".Error();
                 return null;
             }
 

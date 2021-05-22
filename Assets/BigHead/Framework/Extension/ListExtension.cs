@@ -7,6 +7,7 @@
 //
 
 using System.Collections.Generic;
+using BigHead.Framework.Core;
 
 namespace BigHead.Framework.Extension
 {

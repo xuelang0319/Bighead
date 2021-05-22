@@ -9,7 +9,7 @@
 using System;
 using System.IO;
 using System.Text;
-using BigHead.Framework.Extension;
+using BigHead.Framework.Core;
 
 namespace BigHead.Framework.Utility.Readers
 {

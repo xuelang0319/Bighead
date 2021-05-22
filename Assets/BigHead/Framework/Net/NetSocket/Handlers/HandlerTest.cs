@@ -6,7 +6,7 @@
 //  Eric    |  2021年1月8日    |   测试
 //
 
-using BigHead.Framework.Extension;
+using BigHead.Framework.Core;
 using BigHead.Framework.Net.NetSocket.Enums;
 
 namespace BigHead.Framework.Net.NetSocket.Handlers

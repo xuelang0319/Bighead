@@ -8,7 +8,7 @@
 
 using System;
 using System.IO;
-using BigHead.Framework.Extension;
+using BigHead.Framework.Core;
 
 namespace BigHead.Framework.Utility.Helper
 {
