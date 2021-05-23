@@ -23,7 +23,7 @@ namespace BigHead.Editor.Generate.GenBasic
             Protected_Static
         }
 
-        protected modifier Modifier = modifier.Public;
+        public modifier Modifier { get; set; } = modifier.Public;
         protected string GetModifier => Modifier.ToString().Replace('_', ' ').ToLower();
         
         protected string Name;
@@ -36,8 +36,8 @@ namespace BigHead.Editor.Generate.GenBasic
         protected readonly string DoubleCharNewLine;
 
         /// <summary> 注释 </summary>
-        protected string Annotation;
-        
+        public string Annotation { get; set; }
+
         public GenBasic(int charLength, string name)
         {
             Name = name;
@@ -51,7 +51,7 @@ namespace BigHead.Editor.Generate.GenBasic
         /// 开始生成
         /// </summary>
         public abstract StringBuilder StartGenerate();
-        
+
         /// <summary>
         /// 获取在当前空格符基础长度之上再偏移的换行符
         /// </summary>
@@ -81,9 +81,11 @@ namespace BigHead.Editor.Generate.GenBasic
         /// <summary>
         /// 添加大括号
         /// </summary>
-        protected string AddBraces(StringBuilder builder)
+        protected string AddBraces(StringBuilder builder, bool startNewLine = true)
         {
-            return new StringBuilder()
+            var braces = new StringBuilder();
+                if(startNewLine) braces.AppendLine();
+            return braces
                 .Append(Charactor)
                 .Append("{")
                 .AppendLine()

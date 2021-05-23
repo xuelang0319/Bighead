@@ -12,28 +12,52 @@ namespace BigHead.Editor.Generate.GenBasic
 {
     public class GenProperty : GenBasic
     {
-        public string Type;
-        public string Value;
-        public bool Get = true;
-        public bool Set = true;
-        public bool Override = false;
+        private readonly string _type;
+        private string _value;
+        private bool _get = true;
+        private bool _set = true;
+        private bool _override = false;
 
         public GenProperty(int charLength, string name, string type) : base(charLength, name)
         {
-            Type = type;
+            _type = type;
         }
 
         public string AsParam()
         {
-            return $"{Type} {Name}";
+            return $"{_type} {Name}";
+        }
+
+        public GenProperty SetSet(bool b)
+        {
+            _set = b;
+            return this;
+        }
+        
+        public GenProperty SetGet(bool b)
+        {
+            _get = b;
+            return this;
+        }
+
+        public GenProperty SetValue(string value)
+        {
+            _value = value;
+            return this;
+        }
+
+        public GenProperty SetOverrider(bool b)
+        {
+            _override = b;
+            return this;
         }
 
         public override StringBuilder StartGenerate()
         {
             var getset = "";
-            switch (Get)
+            switch (_get)
             {
-                case true when Set:
+                case true when _set:
                     getset = " { get; set;}";
                     break;
                 case true:
@@ -41,15 +65,15 @@ namespace BigHead.Editor.Generate.GenBasic
                     break;
                 default:
                 {
-                    if (Set) getset = " { set;}";
+                    if (_set) getset = " { set;}";
                     break;
                 }
             }
             
-            var value = string.IsNullOrEmpty(Value) ? "" : $" = {Value};";
-            var Override = this.Override ? "override " : "";
+            var value = string.IsNullOrEmpty(_value) ? "" : $" = {_value};";
+            var Override = this._override ? "override " : "";
 
-            return new StringBuilder($"{Charactor}{GetAnnotation()} {GetModifier} {Override}{Type} {Name}{getset}{value}");
+            return new StringBuilder($"{Charactor}{GetAnnotation()}{GetModifier} {Override}{_type} {Name}{getset}{value}");
         }
     }
 }

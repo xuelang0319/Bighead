@@ -13,10 +13,10 @@ namespace BigHead.Editor.Generate.GenBasic
 {
     public class GenClass : GenBasic
     {
-        public List<string> Attributes = new List<string>();
-        public List<string> Usings = new List<string>();
-        public List<GenFoo> Foos = new List<GenFoo>();
-        public List<GenProperty> Properties = new List<GenProperty>();
+        private readonly List<string> Attributes = new List<string>();
+        private readonly List<string> Usings = new List<string>();
+        private readonly List<GenFoo> Foos = new List<GenFoo>();
+        private readonly List<GenProperty> Properties = new List<GenProperty>();
         public string Parent;
         public string virtualType;
         public string Namespace;
@@ -52,6 +52,24 @@ namespace BigHead.Editor.Generate.GenBasic
         private string GetUsing(string str)
         {
             return "using " + str + ";" + CharNewLine;
+        }
+
+        /// <summary>
+        /// 添加引用
+        /// </summary>
+        public GenClass AddUsing(string str)
+        {
+            Usings.Add(str);
+            return this;
+        }
+
+        /// <summary>
+        /// 添加特性
+        /// </summary>
+        public GenClass AddAttributes(string str)
+        {
+            Attributes.Add(str);
+            return this;
         }
 
         /// <summary>
@@ -105,7 +123,7 @@ namespace BigHead.Editor.Generate.GenBasic
                 if (i < Foos.Count - 1) detailBuilder.Append(CharNewLine);
             }
 
-            builder.Append(AddBraces(detailBuilder));
+            builder.Append(AddBraces(detailBuilder, false));
 
             return builder;
         }

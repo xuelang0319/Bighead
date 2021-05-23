@@ -6,6 +6,7 @@
 //  Eric    |  2021年5月23日   |   方法模板
 //
 
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -16,9 +17,9 @@ namespace BigHead.Editor.Generate.GenBasic
         private readonly string _returnType;
         private List<GenProperty> _params;
         private List<string> _details;
-        public bool IsOverride = false;
-        public bool IsConstruct = false;
-        public bool IsVirtual = false;
+        private bool _isOverride = false;
+        private bool _isConstruct = false;
+        private bool _isVirtual = false;
 
 
         public GenFoo(int charLength, string name, string returnType) : base(charLength, name)
@@ -36,9 +37,9 @@ namespace BigHead.Editor.Generate.GenBasic
             builder
                 .Append(GetModifier)
                 .Append(Space)
-                .Append(IsOverride ? "override " : "")
-                .Append(IsVirtual ? "virtual " : "")
-                .Append(IsConstruct ? "" : _returnType + Space)
+                .Append(_isOverride ? "override " : "")
+                .Append(_isVirtual ? "virtual " : "")
+                .Append(_isConstruct ? "" : _returnType + Space)
                 .Append(Name);
             
             var paramBuilder = new StringBuilder();
@@ -58,10 +59,10 @@ namespace BigHead.Editor.Generate.GenBasic
                 {
                     // 由于要加入大括号，所以每个提前向后移动
                     detailBuilder
-                        .Append(GetOffsetCharactor(4))
+                        .Append(Charactor)
                         .Append(_details[i]);
                     if (i < _details.Count - 1)
-                        detailBuilder.Append(CharNewLine);
+                        detailBuilder.AppendLine();
                 }
 
             builder.Append(AddBraces(detailBuilder));
@@ -71,12 +72,39 @@ namespace BigHead.Editor.Generate.GenBasic
         /// <summary>
         /// 添加参数
         /// </summary>
-        public GenProperty AddParam(string type, string name)
+        public GenFoo AddParam(string type, string name)
         {
             if (_params == null) _params = new List<GenProperty>();
             var property = new GenProperty(CharLength + 4, name, type);
             _params.Add(property);
-            return property;
+            return this;
+        }
+        
+        /// <summary>
+        /// 设置Overrider
+        /// </summary>
+        public GenFoo SetOverrider(bool b)
+        {
+            _isOverride = b;
+            return this;
+        }
+
+        /// <summary>
+        /// 设置是否为构造方法
+        /// </summary>
+        public GenFoo SetConstruct(bool b)
+        {
+            _isConstruct = b;
+            return this;
+        }
+        
+        /// <summary>
+        /// 设置是否为虚方法
+        /// </summary>
+        public GenFoo SetVirtual(bool b)
+        {
+            _isVirtual = b;
+            return this;
         }
 
         /// <summary>
