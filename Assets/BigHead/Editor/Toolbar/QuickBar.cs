@@ -11,6 +11,7 @@
 // -------------------------------------------------------------------------------------
 
 using BigHead.Editor.Customer;
+using BigHead.Editor.Generate.GenCsv;
 using UnityEditor;
 using UnityEngine;
 
@@ -39,6 +40,7 @@ namespace BigHead.Editor.Toolbar
                 EditorGUIUtility.IconContent("AudioMixerSnapshot Icon"),
                 CommandStyle.Style))
             {
+                Excel2Csv.Generate();
             }
 
             EditorGUIUtility.SetIconSize(new Vector2(18, 18));

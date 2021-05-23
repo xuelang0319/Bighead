@@ -6,6 +6,7 @@
 //  Eric    |  2020年12月18日  |   编辑器菜单扩展项
 //
 
+using BigHead.Editor.Generate.GenCsv;
 using UnityEditor;
 
 namespace BigHead.Editor
@@ -16,6 +17,12 @@ namespace BigHead.Editor
         public static void Test()
         {
             
+        }
+        
+        [MenuItem("BigHead/Csv/Clear")]
+        public static void ClearGenCsv()
+        {
+            Excel2Csv.ClearAll();
         }
     }
 }
