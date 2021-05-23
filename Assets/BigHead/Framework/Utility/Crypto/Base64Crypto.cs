@@ -11,7 +11,7 @@ using System.Text;
 
 namespace BigHead.Framework.Utility.Crypto
 {
-    public class Base64Crypto
+    public partial class BigHeadCrypto
     {
         /// <summary>
         /// Base64加密

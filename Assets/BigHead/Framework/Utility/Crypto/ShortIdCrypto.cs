@@ -10,7 +10,7 @@ using System;
 
 namespace BigHead.Framework.Utility.Crypto
 {
-    public class ShortIdCrypto
+    public partial class BigHeadCrypto
     {
         /// <summary>
         /// 短编码生成器
@@ -31,7 +31,7 @@ namespace BigHead.Framework.Utility.Crypto
                 "M", "N", "O", "P", "Q", "R", "S", "T",
                 "U", "V", "W", "X", "Y", "Z"
             };
-            string hex = MD5Crypto.MD5Encode(input);
+            string hex = MD5Encode(input);
             //把加密字符按照8位一组16进制与0x3FFFFFFF进行位与运算
             int hexint = 0x3FFFFFFF & Convert.ToInt32("0x" + hex.Substring(rd.Next(0, 4) * 8, 8), 16);
             if (fix) hexint = 0x3FFFFFFF & Convert.ToInt32("0x" + hex.Substring(8, 8), 16);

@@ -10,7 +10,7 @@ using System;
 
 namespace BigHead.Framework.Utility.Crypto
 {
-    public class Crc32Crypto
+    public partial class BigHeadCrypto
     {
          static UInt32[] crcTable =
         {

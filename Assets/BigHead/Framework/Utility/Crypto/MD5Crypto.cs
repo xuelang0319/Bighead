@@ -12,7 +12,7 @@ using System.Text;
 
 namespace BigHead.Framework.Utility.Crypto
 {
-    public class MD5Crypto
+    public partial class BigHeadCrypto
     {
         /// <summary>
         /// MD5的全局句柄
