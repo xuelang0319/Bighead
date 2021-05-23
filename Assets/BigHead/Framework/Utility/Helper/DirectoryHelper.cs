@@ -40,5 +40,29 @@ namespace BigHead.Framework.Utility.Helper
 
             return true;
         }
+        
+        /// <summary>
+        /// 清空路径下的所有文件及子文件夹
+        /// </summary>
+        public static void ClearDirectory(string path)
+        {
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            var files = Directory.GetFiles(path, "*", SearchOption.AllDirectories);
+
+            // 删除文件夹内的文件
+            foreach (var file in files)
+            {
+                File.Delete(file);
+            }
+
+            // 删除文件夹的所有子文件夹
+            var dirs = Directory.GetDirectories(path, "*", SearchOption.AllDirectories);
+            foreach (var dir in dirs)
+            {
+                Directory.Delete(dir);
+            }
+        }
     }
 }
