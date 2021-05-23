@@ -159,7 +159,7 @@ namespace BigHead.Framework.Net.NetSocket
         /// T.Instance.Start(Callback);
         /// </summary>
         /// <param name="callback">返回连接结果</param>
-        public virtual void Start(Callback<ConnectResponse> callback)
+        public virtual void Start(Action<ConnectResponse> callback)
         {
             // 无连接状态
             if (Equals(Application.internetReachability, NetworkReachability.NotReachable))

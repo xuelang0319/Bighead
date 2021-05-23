@@ -6,16 +6,16 @@
 //  Eric    |  2020年12月18日  |   Mono对象池组件
 //
 
-using BigHead.Framework.Core;
+using System;
 using UnityEngine;
 
 namespace BigHead.Framework.Pool
 {
     public class PoolComponent : MonoBehaviour
     {
-        private Callback _destroyFoo;
+        private Action _destroyFoo;
         
-        public void Initialize(Callback destroyFoo)
+        public void Initialize(Action destroyFoo)
         {
             _destroyFoo = destroyFoo;
         }

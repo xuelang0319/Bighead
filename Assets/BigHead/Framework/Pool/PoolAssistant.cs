@@ -6,27 +6,29 @@
 //  Eric    |  2020年12月18日  |   对象池
 //
 
+using System;
 using System.Collections.Generic;
 using BigHead.Framework.Core;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace BigHead.Framework.Pool
 {
     public static class PoolAssistant
     {
         public static Pool<T> GetPool<T>(
-            Recall<T> createFoo = null,
-            Callback<T> recycleFoo = null, 
-            Callback<T> clearFoo = null) where T : class
+            Func<T> createFoo = null,
+            Action<T> recycleFoo = null, 
+            Action<T> clearFoo = null) where T : class
         {
             return new Pool<T>(createFoo, recycleFoo, clearFoo);
         }
 
         public static MonoPool<T> GetMonoPool<T>(
             string parentName,
-            Recall<T> createFoo = null,
-            Callback<T> recycleFoo = null,
-            Callback<T> clearFoo = null) where T : class
+            Func<T> createFoo = null,
+            Action<T> recycleFoo = null,
+            Action<T> clearFoo = null) where T : class
         {
             return new MonoPool<T>(parentName, createFoo, recycleFoo, clearFoo);
         }
@@ -36,11 +38,11 @@ namespace BigHead.Framework.Pool
     {
         private readonly Stack<T> _pool;
 
-        private Recall<T> _createFoo;
-        private Callback<T> _recycleFoo;
-        private Callback<T> _clearFoo;
+        private Func<T> _createFoo;
+        private Action<T> _recycleFoo;
+        private Action<T> _clearFoo;
 
-        public Pool(Recall<T> createFoo = null, Callback<T> recycleFoo = null, Callback<T> clearFoo = null)
+        public Pool(Func<T> createFoo = null, Action<T> recycleFoo = null, Action<T> clearFoo = null)
         {
             _pool = new Stack<T>();
             _createFoo = createFoo;
@@ -76,9 +78,9 @@ namespace BigHead.Framework.Pool
         private Transform _parent { get; }
 
         public MonoPool(string parentName = "", 
-            Recall<T> createFoo = null, 
-            Callback<T> recycleFoo = null, 
-            Callback<T> clearFoo = null)
+            Func<T> createFoo = null, 
+            Action<T> recycleFoo = null, 
+            Action<T> clearFoo = null)
         {
             var component = new GameObject(string.IsNullOrEmpty(parentName)? "MonoPool" : parentName).AddComponent<PoolComponent>();
             component.Initialize(OnParentDestroy);

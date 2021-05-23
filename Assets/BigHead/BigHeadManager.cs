@@ -6,13 +6,13 @@
 //  Eric    |  2021年1月8日    |   框架管理器
 //
 
-using BigHead.Framework.Core;
+using System;
 
 namespace BigHead
 {
-    public class BigHeadManager : MonoSingleton<BigHeadManager>
+    public class BigHeadManager : MonoGlobalSingleton<BigHeadManager>
     {
-        public event Callback DestroyEvent;
+        public event Action DestroyEvent;
 
         private void OnDestroy()
         {
