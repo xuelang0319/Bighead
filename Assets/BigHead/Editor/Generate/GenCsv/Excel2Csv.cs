@@ -18,6 +18,7 @@ using BigHead.Framework.Utility.Crypto;
 using BigHead.Framework.Utility.Helper;
 using Excel;
 using UnityEditor;
+using static BigheadConfig;
 
 namespace BigHead.Editor.Generate.GenCsv
 {
@@ -50,21 +51,21 @@ namespace BigHead.Editor.Generate.GenCsv
 
         private static void DeleteDynamicCsv()
         {
-            DirectoryHelper.ClearDirectory(CustomerConfig.DynamicCsvPath);
-            DirectoryHelper.ClearDirectory(CustomerConfig.ResourcesCsvPath);
+            DirectoryHelper.ClearDirectory(DynamicCsvPath);
+            DirectoryHelper.ClearDirectory(ResourcesCsvPath);
         }
 
         private static void DeleteConfig()
         {
-            var configPath = CustomerConfig.CsvConfigFullName;
+            var configPath = CsvConfigFullName;
             FileHelper.DeleteFile(configPath);
         }
 
         private static void AnalysisExcel()
         {
-            var excelPath = CustomerConfig.ExcelPath;
-            var dynamicCsvPath = CustomerConfig.DynamicCsvPath;
-            var resourcesCsvPath = CustomerConfig.ResourcesCsvPath;
+            var excelPath = ExcelPath;
+            var dynamicCsvPath = DynamicCsvPath;
+            var resourcesCsvPath = ResourcesCsvPath;
             DirectoryHelper.ForceCreateDirectory(resourcesCsvPath);
 
             // 获取Excel文件夹下所有文件路径
@@ -161,7 +162,7 @@ namespace BigHead.Editor.Generate.GenCsv
                                 fileStream.Write(data, 0, data.Length);
                             }
                             
-                            if(CustomerConfig.GenerateCsvInResources)
+                            if(GenerateCsvInResources)
                                 using (var fileStream =
                                     new FileStream($"{resourcesCsvPath}/{tableName}.csv", FileMode.Create))
                                 {
@@ -175,7 +176,7 @@ namespace BigHead.Editor.Generate.GenCsv
             var datas = new List<string>();
 
             // 读取生成存储信息
-            var fullName = CustomerConfig.CsvConfigFullName;
+            var fullName = CsvConfigFullName;
             if (File.Exists(fullName))
             {
                 using (var stream = new StreamReader(fullName))
@@ -195,7 +196,7 @@ namespace BigHead.Editor.Generate.GenCsv
             // 先删除旧的生成脚本
             foreach (var item in olds)
             {
-                var path = CustomerConfig.GenerateCsPath + item.Split('@')[0];
+                var path = GenerateCsPath + item.Split('@')[0];
                 var rowPath = path + "Row.cs";
                 var csvPath = path + "Csv.cs";
                 FileHelper.DeleteFile(rowPath);
@@ -209,7 +210,7 @@ namespace BigHead.Editor.Generate.GenCsv
             // 增加新的生成脚本
             foreach (var item in news)
             {
-                var path = CustomerConfig.DynamicCsvPath + "/" + item.Split('@')[0] + ".csv";
+                var path = DynamicCsvPath + "/" + item.Split('@')[0] + ".csv";
                 Csv2Cs.GenerateCs(path);
                 
                 ++count;
@@ -217,11 +218,11 @@ namespace BigHead.Editor.Generate.GenCsv
             }
             // 生成最新的配置文件
             var bytes = Encoding.UTF8.GetBytes(string.Join(Environment.NewLine, md5List));
-            var configFullName = CustomerConfig.CsvConfigFullName;
+            var configFullName = CsvConfigFullName;
             if (File.Exists(configFullName))
                 File.Delete(configFullName);
 
-            var configPath = CustomerConfig.ConfigPath;
+            var configPath = ConfigPath;
             if (!Directory.Exists(configPath))
                 Directory.CreateDirectory(configPath);
             using (var fileStream = new FileStream(configFullName, FileMode.Create))

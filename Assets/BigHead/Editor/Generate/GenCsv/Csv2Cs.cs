@@ -9,10 +9,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BigHead.Editor.Customer;
 using BigHead.Editor.Generate.GenBasic;
 using BigHead.Framework.Core;
 using BigHead.Framework.Utility.Helper;
+using static BigHead.Customer.CustomerGenCsv;
 
 namespace BigHead.Editor.Generate.GenCsv
 {
@@ -20,7 +20,7 @@ namespace BigHead.Editor.Generate.GenCsv
     {
         public static void ClearGenCs()
         {
-            DirectoryHelper.ClearDirectory(CustomerConfig.GenerateCsPath);
+            DirectoryHelper.ClearDirectory(BigheadConfig.GenerateCsPath);
         }
 
         public static void GenerateCs(string path)
@@ -33,8 +33,8 @@ namespace BigHead.Editor.Generate.GenCsv
             }
 
             var name = datas[0].Split(',');
-            var desc = datas[1].Split(',');
-            var type = datas[2].Split(',');
+            var type = datas[1].Split(',');
+            var desc = datas[2].Split(',');
 
             var baseName = path.Split('/').Last().Split('.').First();
             var fileName = baseName + "Csv";
@@ -51,19 +51,15 @@ namespace BigHead.Editor.Generate.GenCsv
                 .Append(Environment.NewLine)
                 .Append(analysis.StartGenerate()).ToString();
             
-            DirectoryHelper.ForceCreateDirectory(CustomerConfig.GenerateCsPath);
-            FileHelper.CreateFile(CustomerConfig.GenerateCsPath, csvRow.StartGenerate().ToString(), rowName+ ".cs");
-            FileHelper.CreateFile(CustomerConfig.GenerateCsPath, csvClass, totalName);
+            DirectoryHelper.ForceCreateDirectory(BigheadConfig.GenerateCsPath);
+            FileHelper.CreateFile(BigheadConfig.GenerateCsPath, csvRow.StartGenerate().ToString(), rowName+ ".cs");
+            FileHelper.CreateFile(BigheadConfig.GenerateCsPath, csvClass, totalName);
         }
 
         private static GenClass GetCsvRow(string[] name, string[] desc, string[] type, string path, string rowName)
         {
             var genClass = new GenClass(0, rowName);
-            genClass
-                .AddAttributes($"[Name(\"{rowName}\")]")
-                .AddUsing("Framework.Core")
-                .AddUsing("Framework.Utility.CsvHelper")
-                .AddUsing("UnityEngine");
+            genClass.AddUsing("UnityEngine");
             
             for (int i = 0; i < name.Length; i++)
             {
@@ -71,12 +67,12 @@ namespace BigHead.Editor.Generate.GenCsv
                 
                 try
                 {
-                    transitionType = CustomerGenCsv.GetPropertyType(type[i]);
+                    transitionType = GetPropertyType(type[i]);
                 }
                 catch
                 {
                     $"在生成CSV代码时发生类型转换错误，路径： {path}，第{i + 3}列，Type: {type}".Exception();
-                    transitionType = CustomerGenCsv.ToNull();
+                    transitionType = ToNull();
                 }
 
                 var prop = genClass.AddProperty(name[i], transitionType);
@@ -93,16 +89,20 @@ namespace BigHead.Editor.Generate.GenCsv
             genClass.IsPartial = true;
             genClass.Modifier = GenBasic.GenBasic.modifier.Public_Static;
             genClass
-                .AddUsing("BigHead.Framework.Utility.Readers")
-                .AddUsing("Framework.Utility.CsvHelper")
                 .AddUsing("System.Collections.Generic")
                 .AddUsing("System")
-                .AddUsing("static Framework.Customer.CustomerGenCsv")
+                .AddUsing("static BigHead.Customer.CustomerGenCsv")
                 .AddUsing("UnityEngine");
+            
 
             var foo = genClass.AddFoo($"Get{fileName}", fileName);
             foo.Modifier = GenBasic.GenBasic.modifier.Public_Static;
-            foo.AddDetail($"return CsvFunctions.GetCsv<{fileName}>(\"{fileName}\");");
+            foo
+                .AddDetail($"if(_instance{fileName}.Equals(null)) _instance{fileName} = CsvFunctions.GetCsv<{fileName}>(\"{fileName}\");")
+                .AddDetail($"return _instance{fileName};");
+            var prop = genClass.AddProperty($"_instance{fileName}", fileName);
+            prop.Modifier = GenBasic.GenBasic.modifier.Private_Static;
+            
             return genClass;
         }
 
@@ -117,6 +117,7 @@ namespace BigHead.Editor.Generate.GenCsv
 
             // 解析方法
             var readFoo = genClass.AddFoo("AnalysisCsv", "void");
+            readFoo.Modifier = GenBasic.GenBasic.modifier.Protected;
             readFoo.SetOverrider(true);
             readFoo.AddParam("List<string>", "list");
             readFoo.AddParam("Action", "callback");
@@ -159,7 +160,7 @@ namespace BigHead.Editor.Generate.GenCsv
                 var line = "";
                 try
                 {
-                    line = $"    csvClass.{name[i]} = {CustomerGenCsv.GetTransformFunc(type[i], value)};";
+                    line = $"    csvClass.{name[i]} = {GetTransformFunc(type[i], value)};";
                 }
                 catch (Exception e)
                 {

@@ -9,13 +9,12 @@
 using System;
 using BigHead.Framework.Core;
 using JetBrains.Annotations;
-using UnityEngine;
 
-namespace BigHead.Editor.Customer
+namespace BigHead.Customer
 {
-    public class CustomerGenCsv
+    public static class CustomerGenCsv
     {
-           public static string GetPropertyType(string str)
+        public static string GetPropertyType(string str)
         {
             switch (str)
             {
@@ -77,14 +76,6 @@ namespace BigHead.Editor.Customer
                 case ":Array:float":
                 case ":Array:FLO":
                     return "float[]";
-                case "Vector2[]":
-                case "Vec2[]":
-                case ":array:Vec2":
-                    return "Vector2[]";
-                case "Vector2":
-                case "Vec2":
-                case "V2":
-                    return "Vector2";
                 default:
                     throw new Exception($"转换CSV属性类型错误，值: {str}");
             }
@@ -105,7 +96,7 @@ namespace BigHead.Editor.Customer
                 case "STR":
                 case "STRING":
                 case ":Str":
-                case ":str":   
+                case ":str":
                 case "Uni:STR":
                 case "Uni:STRING":
                 case "Uni:Str":
@@ -122,7 +113,7 @@ namespace BigHead.Editor.Customer
                     return $"bool.Parse({value})";
                 case "FLOAT":
                 case "Float":
-                case ":float": 
+                case ":float":
                 case ":FLO":
                     return $"ToFloat({value})";
                 case "[INT]":
@@ -149,17 +140,9 @@ namespace BigHead.Editor.Customer
                     return $"ToBoolArray({value})";
                 case "[FLOAT]":
                 case "[Float]":
-                case ":Array:float": 
+                case ":Array:float":
                 case ":Array:FLO":
                     return $"ToFloatArray({value})";
-                case "Vector2[]":
-                case "Vec2[]":
-                case ":array:Vec2":
-                    return $"ToVector2Array({value})";
-                case "Vector2":
-                case "Vec2":
-                case "V2":
-                    return $"ToVector2({value})";
                 default:
                     throw new Exception($"转换CSV数据类型错误，指定类型： {type}, 值: {value}");
             }
@@ -171,13 +154,13 @@ namespace BigHead.Editor.Customer
             {
                 return string.IsNullOrEmpty(str) || string.IsNullOrWhiteSpace(str) ? 0 : int.Parse(str);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 $"Parse string error: {str} - Exception : {e}".Error();
                 return 0;
             }
         }
-        
+
         public static float ToFloat(string str) =>
             string.IsNullOrEmpty(str) ? 0 : float.Parse(str);
 
@@ -186,16 +169,16 @@ namespace BigHead.Editor.Customer
             if (string.IsNullOrEmpty(str)) return new int[0];
             return Array.ConvertAll(str.Split('|'), int.Parse);
         }
-        
+
         public static int[,] ToInt2Array(string str)
         {
-            if (string.IsNullOrEmpty(str)) return new int[0,0];
+            if (string.IsNullOrEmpty(str)) return new int[0, 0];
             var x = str.Split('|');
             var y = x[0].Split('_');
             int[,] temp = new int[x.Length, y.Length];
             for (int i = 0; i < x.Length; i++)
             {
-                
+
                 y = x[i].Split('_');
                 for (int j = 0; j < y.Length; j++)
                 {
@@ -204,6 +187,7 @@ namespace BigHead.Editor.Customer
                     temp[i, j] = value;
                 }
             }
+
             return temp;
         }
 
@@ -218,33 +202,13 @@ namespace BigHead.Editor.Customer
             if (string.IsNullOrEmpty(str)) return new bool[0];
             return Array.ConvertAll(str.Split('|'), bool.Parse);
         }
-        
+
         public static float[] ToFloatArray(string str)
         {
             if (string.IsNullOrEmpty(str)) return new float[0];
             return Array.ConvertAll(str.Split('|'), float.Parse);
         }
 
-        public static Vector2[] ToVector2Array(string str)
-        {
-            if (string.IsNullOrEmpty(str)) return new Vector2[0];
-            var item =  str.Split('|');
-            var array = new Vector2[item.Length];
-            for (int i = 0; i < item.Length; i++)
-            {
-                
-                var value = item[i].Split('_');
-                array[i] = new Vector2(float.Parse(value[0]), float.Parse(value[1]));
-            }
-            return array;
-        }
-        public static Vector2 ToVector2(string str)
-        {
-            if (string.IsNullOrEmpty(str)) return new Vector2(0,0);
-            var item = str.Split('_');
-            return new Vector2(float.Parse(item[0]), float.Parse(item[1]));
-        }
-            
 
         [CanBeNull]
         public static string ToNull()
