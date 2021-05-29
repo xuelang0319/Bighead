@@ -6,15 +6,39 @@
 //  Eric    |  2020年12月17日  |   Csv格式读取方法
 //
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using BigHead.Framework.Core;
+using UnityEngine;
 
 namespace BigHead.Framework.Utility.Readers
 {
     public class CsvReader
     {
+        /// <summary>
+        /// 根据ResConfig设置获取Csv文本
+        ///
+        /// [Warning]
+        /// *当从AB包中加载时使用的是异步获取，但Resource下使用的是同步获取。
+        /// *当切换到Bundle模式下应注意提前加载，否则有可能报空
+        /// </summary>
+        public static void ReadCsv(string key, Action<string> callback)
+        {
+            if (BigheadConfig.LoadInBundle_Config)
+            {
+                // TODO: 将引用Addressable或重写一套打包工具
+            }
+            else
+            {
+                key = key.Replace(".csv", "");
+                var asset = Resources.Load<TextAsset>(key);
+                if(asset) callback?.Invoke(asset.text);
+                else $"没有加载到CSV配置表，请检查Resource目录下文件路径是否正确 - 路径 : {key}".Exception();
+            }
+        }
+        
         /// <summary>
         /// 路径读取文件操作
         /// </summary>
