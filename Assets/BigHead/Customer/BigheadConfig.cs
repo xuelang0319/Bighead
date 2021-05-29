@@ -6,11 +6,21 @@
 //  Eric    |  2021年1月8日    |   框架配置类
 //
 
-namespace BigHead.Customer
+public static class BigheadConfig
 {
-    public static class BigheadConfig
-    {
-        /// <summary> Speaker封装类打印开关，非调试期请关闭. </summary>
-        public const bool Debug = true;
-    }
+    /// <summary> Speaker封装类打印开关，非调试期请关闭. </summary>
+    public const bool Debug = true;
+
+
+    /// <summary> 预制体资源加载 </summary>
+    public const bool LoadInBundle_Prefab = false;
+
+    /// <summary> 图片资源加载 </summary>
+    public const bool LoadInBundle_Sprite = false;
+
+    /// <summary> 配置资源加载 </summary>
+    public const bool LoadInBundle_Config = false;
+
+    /// <summary> 音效资源加载 </summary>
+    public const bool LoadInBundle_Sound = false;
 }
