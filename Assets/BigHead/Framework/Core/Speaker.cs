@@ -7,7 +7,6 @@
 //
 
 using System;
-using BigHead.Customer;
 using UnityEngine;
 
 namespace BigHead.Framework.Core
