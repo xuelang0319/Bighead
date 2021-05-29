@@ -185,3 +185,66 @@ public static class AudioManager
         _music.UnPause();
     }
 }
+
+public static class AudioMenu
+{
+    /// <summary>
+    /// 播放音乐
+    /// </summary>
+    public static void PlayMusic(AudioClip clip) => 
+        AudioManager.Play(clip, true);
+
+    /// <summary>
+    /// 播放音效
+    /// </summary>
+    public static void PlaySound(AudioClip clip) =>
+        AudioManager.Play(clip, false);
+
+    /// <summary>
+    /// 手动指定播放器
+    /// </summary>
+    public static void Play(AudioClip clip, bool isMusic) =>
+        AudioManager.Play(clip, isMusic);
+
+    /// <summary>
+    /// 设置全部静音状态
+    /// </summary>
+    public static void SetAllMuteState(bool isMute)
+    {
+        AudioManager.SetMute(true, isMute);
+        AudioManager.SetMute(false, isMute);
+    }
+
+    /// <summary>
+    /// 设置全部音量大小
+    /// </summary>
+    public static void SetAllVolume(float value)
+    {
+        AudioManager.SetVolume(true, value);
+        AudioManager.SetVolume(false, value);
+    }
+
+    /// <summary>
+    /// 设置音乐静音状态
+    /// </summary>
+    public static void SetMusicMuteState(bool isMute) =>
+        AudioManager.SetMute(true, isMute);
+        
+    /// <summary>
+    /// 设置音效静音状态
+    /// </summary>
+    public static void SetSoundMuteState(bool isMute) =>
+        AudioManager.SetMute(false, isMute);
+        
+    /// <summary>
+    /// 暂停播放音乐
+    /// </summary>
+    public static void PauseMusic() => 
+        AudioManager.PauseMusic();
+
+    /// <summary>
+    /// 继续播放音乐
+    /// </summary>
+    public static void UnPauseMusic() =>
+        AudioManager.UnPauseMusic();
+}
