@@ -8,7 +8,7 @@
 
 using UnityEngine;
 
-public class MonoSceneSingleton<T> : MonoBehaviour where T : MonoSceneSingleton<T>
+public abstract class MonoSceneSingleton<T> : MonoBehaviour where T : MonoSceneSingleton<T>
 {
     private static T _instance;
 
