@@ -75,7 +75,7 @@ namespace BigHead.Framework.Pool
     public class MonoPool<T> where T : class
     {
         private readonly Pool<T> _pool;
-        private Transform _parent { get; }
+        public Transform Parent { get; }
 
         public MonoPool(string parentName = "", 
             Func<T> createFoo = null, 
@@ -84,13 +84,13 @@ namespace BigHead.Framework.Pool
         {
             var component = new GameObject(string.IsNullOrEmpty(parentName)? "MonoPool" : parentName).AddComponent<PoolComponent>();
             component.Initialize(OnParentDestroy);
-            _parent = component.transform;
+            Parent = component.transform;
             _pool = new Pool<T>(
                 createFoo, 
                 (item =>
             {
                 if (item is GameObject gameObject)
-                    gameObject.transform.SetParent(_parent);
+                    gameObject.transform.SetParent(Parent);
                 
                 recycleFoo?.Invoke(item);
             }), 
@@ -103,6 +103,6 @@ namespace BigHead.Framework.Pool
 
         private void OnParentDestroy() => _pool.Clear();
         
-        public void Clear() => Object.Destroy(_parent.gameObject);
+        public void Clear() => Object.Destroy(Parent.gameObject);
     }
 }
