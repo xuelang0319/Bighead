@@ -10,10 +10,46 @@ using System;
 using BigHead.Framework.Core;
 using JetBrains.Annotations;
 
+/*
+ * 【注意】由于使用CSV文件规范，所以的Excel数据中都不能含有','符号！！！
+ * Excel自动生成工具使用方法：
+ * 1、格式: 固定前三行， 第一行为生成代码时的变量名称， 第二行为变量类型， 第三行为中文注释
+ * 例:
+ * Id        Type        Desc        Value        IsStatic
+ * :int      :str        :str        :Array:Str   :Bool
+ * 编号       类型         注释        值            是否静态
+ * 100001    机甲         示例        护胸|肩甲      TRUE
+ *
+ * 2、特殊类型：如果需要添加新的类型和解析方式，可以在Assets/BigHead/Customer/CustomerGenCsv中添加以下数据：
+ * ① GenPropertyType: 转义方法，返回真实变量类型。
+ * ② GetTransformFunc: 转义方法，返回调用的解析方法名称。
+ * ③ 在CustomerGenCsv脚本中添加②中的对应名称的解析方法，返回类型需与①中的变量真实类型相同。
+ *
+ * 3、特殊引用：如果生成的类型需要引用一些特殊的NameSpace,可以在Assets/BigHead/Customer/CustomerGenCsv.GetUsings()中添加相应的引用名称。
+ * 例： "System" (不需要添加using前缀，也不要添加';'结束符)
+ */
+
+
 namespace BigHead.Customer
 {
     public static class CustomerGenCsv
     {
+        /// <summary>
+        /// 生成脚本的引用类型
+        /// </summary>
+        public static string[] GetUsings()
+        {
+            return new string[]
+            {
+                "UnityEngine",
+                "System.Collections.Generic",
+                "System",
+            };
+        }
+        
+        /// <summary>
+        /// 转义方法获取真实类型
+        /// </summary>
         public static string GetPropertyType(string str)
         {
             switch (str)
@@ -80,7 +116,10 @@ namespace BigHead.Customer
                     throw new Exception($"转换CSV属性类型错误，值: {str}");
             }
         }
-
+  
+        /// <summary>
+        /// 转义方法获取解析方法名称
+        /// </summary>
         public static string GetTransformFunc(string type, string value)
         {
             switch (type)

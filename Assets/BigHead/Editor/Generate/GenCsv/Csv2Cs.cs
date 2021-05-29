@@ -88,11 +88,11 @@ namespace BigHead.Editor.Generate.GenCsv
             var genClass = new GenClass(0, "CsvAssistant");
             genClass.IsPartial = true;
             genClass.Modifier = GenBasic.GenBasic.modifier.Public_Static;
-            genClass
-                .AddUsing("System.Collections.Generic")
-                .AddUsing("System")
-                .AddUsing("static BigHead.Customer.CustomerGenCsv")
-                .AddUsing("UnityEngine");
+            genClass.AddUsing("static BigHead.Customer.CustomerGenCsv");
+
+            var usings = GetUsings();
+            for (int i = 0; i < usings.Length; i++)
+                genClass.AddUsing(usings[i]);
             
 
             var foo = genClass.AddFoo($"Get{fileName}", fileName);

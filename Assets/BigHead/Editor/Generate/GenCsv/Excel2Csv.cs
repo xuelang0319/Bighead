@@ -13,7 +13,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using BigHead.Editor.Customer;
 using BigHead.Framework.Utility.Crypto;
 using BigHead.Framework.Utility.Helper;
 using Excel;
