@@ -12,7 +12,7 @@ using BigHead.Framework.Core;
 
 namespace BigHead.Framework.Game
 {
-    public class Listener
+    public class Listener : Singleton<Listener>
     {
         private Dictionary<string, List<Action<object[]>>> _listeners = new Dictionary<string, List<Action<object[]>>>();
         
