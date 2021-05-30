@@ -37,7 +37,7 @@ namespace BigHead.Editor.Toolbar
 
             EditorGUIUtility.SetIconSize(new Vector2(18, 18));
             if (GUILayout.Button(
-                EditorGUIUtility.IconContent("AudioMixerSnapshot Icon"),
+                EditorGUIUtility.IconContent("MonoLogo"),
                 CommandStyle.Style))
             {
                 Excel2Csv.Generate();
