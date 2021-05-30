@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml.Serialization;
@@ -155,6 +156,28 @@ namespace BigHead.Framework.Utility.Helper
             {
                 e.Exception();
             }
+        }
+        
+        /// <summary>
+        /// 深拷贝，只能拷贝不嵌套的类型。
+        /// </summary>
+        public static T DeepCopy<T>(this T t)
+        {
+            if (t is string || t.GetType().IsValueType) return t;
+
+            var result = Activator.CreateInstance(t.GetType());
+            var fields = t.GetType().GetFields(
+                BindingFlags.Public | 
+                BindingFlags.NonPublic | 
+                BindingFlags.Instance | 
+                BindingFlags.Static);
+            
+            foreach (FieldInfo field in fields)
+            {
+                try { field.SetValue(result, DeepCopy(field.GetValue(t))); }
+                catch { }
+            }
+            return (T)result;
         }
     }
 }
