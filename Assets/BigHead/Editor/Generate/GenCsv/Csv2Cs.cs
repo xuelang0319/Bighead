@@ -8,7 +8,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using BigHead.Editor.Generate.GenBasic;
 using BigHead.Framework.Core;
 using BigHead.Framework.Utility.Helper;
@@ -36,7 +36,7 @@ namespace BigHead.Editor.Generate.GenCsv
             var type = datas[1].Split(',');
             var desc = datas[2].Split(',');
 
-            var baseName = path.Split('/').Last().Split('.').First();
+            var baseName = Path.GetFileNameWithoutExtension(path);
             var fileName = baseName + "Csv";
             var rowName = baseName + "Row";
             var totalName = fileName + ".cs";
