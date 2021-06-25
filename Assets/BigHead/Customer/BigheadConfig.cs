@@ -50,7 +50,9 @@ public static class BigheadConfig
     /// <summary> 非生成Csv配置文件存储路径 </summary>
     public static readonly string ConstCsvPath = GameDataPath + "CsvData/ConstCsv";
     /// <summary> Resources配置文件路径 </summary>
-    public static readonly string ResourcesCsvPath = Application.dataPath + "/Resources/DynamicCsv";
+    public static readonly string ResourcesDynamicCsvPath = Application.dataPath + "/Resources/Csv/DynamicCsv";
+    /// <summary> Resources配置文件路径 </summary>
+    public static readonly string ResourcesConstCsvPath = Application.dataPath + "/Resources/Csv/ConstCsv";
     /// <summary> 同步生成Csv文件在Resources文件夹中 </summary>
     public const bool GenerateCsvInResources = true;
 

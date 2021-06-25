@@ -52,7 +52,7 @@ namespace BigHead.Editor.Generate.GenCsv
         private static void DeleteDynamicCsv()
         {
             DirectoryHelper.ClearDirectory(DynamicCsvPath);
-            DirectoryHelper.ClearDirectory(ResourcesCsvPath);
+            DirectoryHelper.ClearDirectory(ResourcesDynamicCsvPath);
         }
 
         private static void DeleteConfig()
@@ -63,13 +63,15 @@ namespace BigHead.Editor.Generate.GenCsv
 
         private static void AnalysisExcel()
         {
-            var excelPath = ExcelPath;
-            var dynamicCsvPath = DynamicCsvPath;
-            var resourcesCsvPath = ResourcesCsvPath;
-            DirectoryHelper.ForceCreateDirectory(resourcesCsvPath);
+            DirectoryHelper.ForceCreateDirectory(DynamicCsvPath);
+            DirectoryHelper.ForceCreateDirectory(ConstCsvPath);
+            DirectoryHelper.ForceCreateDirectory(ResourcesDynamicCsvPath);
+            DirectoryHelper.ForceCreateDirectory(ResourcesConstCsvPath);
 
             // 上一次生成存储的MD5数据
             var oldDatas = new Dictionary<string, string>();
+            // 此次生成存储的MD5数据
+            var newDatas = new Dictionary<string, string>();
 
             // 读取生成存储信息
             var fullName = CsvConfigFullName;
@@ -87,15 +89,51 @@ namespace BigHead.Editor.Generate.GenCsv
                 }
             }
 
+            // 获取ConstCsv文件夹下所有文件路径
+            var constFiles = Directory.GetFiles(ConstCsvPath, "*", SearchOption.AllDirectories);
+            var constPaths = constFiles.Where(name => name.EndsWith(".csv"))
+                .Select(name => name.Replace('/', '\\')).ToList();
+
+            // 存在ConstCsv文件
+            if (constPaths.Count > 0)
+            {
+                foreach (var constPath in constPaths)
+                {
+                    var content = new FileInfo(constPath).ReadFile();
+                    var md5 = BigHeadCrypto.MD5Encode(content);
+                    var fileNameWithExtension = Path.GetFileName(constPath);
+                    newDatas.Add(fileNameWithExtension, md5);
+
+                    if (oldDatas.ContainsKey(fileNameWithExtension) && 
+                        Equals(oldDatas[fileNameWithExtension], md5))
+                    {
+                        // 数据没有变化
+                        oldDatas.Remove(fileNameWithExtension);
+                    }
+                    else
+                    {
+                        // 数据发生变化
+                        Csv2Cs.GenerateCs(constPath);
+                        // 复制文件到Resources文件夹中
+                        if (GenerateCsvInResources)
+                            File.Copy(constPath, $"{ResourcesConstCsvPath}/{fileNameWithExtension}", true);
+
+                        if (oldDatas.ContainsKey(fileNameWithExtension))
+                            oldDatas.Remove(fileNameWithExtension);
+                    }
+                }
+            }
+
+
+
+
             // 获取Excel文件夹下所有文件路径
-            var files = Directory.GetFiles(excelPath, "*", SearchOption.AllDirectories);
+            var files = Directory.GetFiles(ExcelPath, "*", SearchOption.AllDirectories);
             var paths = files.Where(name => name.EndsWith(".xlsx") || name.EndsWith(".xls"))
                 .Select(name => name.Replace('/', '\\')).ToArray();
             
             // 发生变化的列表
             var changedFilter = new List<string>();
-            // 此次生成存储的MD5数据
-            var newDatas = new Dictionary<string, string>();
             
             // 对每个Excel做MD5变更校验
             foreach (var path in paths)
@@ -225,8 +263,8 @@ namespace BigHead.Editor.Generate.GenCsv
                             var dataName = $"{excelName}${tableName}";
                             newDatas.Add(dataName, md5);
 
-                            var bundleDynamicPath = $"{dynamicCsvPath}/{tableName}.csv";
-                            var resourceDynamicPath = $"{resourcesCsvPath}/{tableName}.csv";
+                            var bundleDynamicPath = $"{DynamicCsvPath}/{tableName}.csv";
+                            var resourceDynamicPath = $"{ResourcesDynamicCsvPath}/{tableName}.csv";
                             
                             // 如果进入判断说明存在，否则为新增
                             if (oldDatas.ContainsKey(dataName))
@@ -279,15 +317,22 @@ namespace BigHead.Editor.Generate.GenCsv
                 ++deleteProgress;
                 EditorUtility.DisplayProgressBar(  $"正在删除旧数据:", key, deleteProgress / deleteCount);
                 var array = key.Split('$');
+
                 // 这是Excel文件，无需处理。
-                if(array.Length == 1) 
+                if (Equals(array.Length, 1) && !array[0].EndsWith(".csv"))
                     continue;
+
+                var csvName = Equals(array.Length, 1)
+                    ? Path.GetFileNameWithoutExtension(array[0]) 
+                    : array[1];
                 
-                // 这是Csv文件。
-                var csvName = array[1];
+                var bundlePath = Equals(array.Length, 1)
+                    ? $"{ConstCsvPath}/{csvName}.csv"
+                    : $"{DynamicCsvPath}/{csvName}.csv";
                 
-                var bundleDynamicPath = $"{dynamicCsvPath}/{csvName}.csv";
-                File.Delete(bundleDynamicPath);
+                File.Delete(bundlePath);
+
+                // 删除生成的代码
                 var rowPath = GenerateCsPath + csvName + "Row.cs";
                 var csvPath = GenerateCsPath + csvName + "Csv.cs";
                 File.Delete(rowPath);
@@ -295,8 +340,11 @@ namespace BigHead.Editor.Generate.GenCsv
 
                 if (GenerateCsvInResources)
                 {
-                    var resourceDynamicPath = $"{resourcesCsvPath}/{csvName}.csv";
-                    File.Delete(resourceDynamicPath);
+                    var resourcePath = Equals(array.Length, 1)
+                        ? $"{ResourcesConstCsvPath}/{csvName}.csv"
+                        : $"{ResourcesDynamicCsvPath}/{csvName}.csv";
+                    
+                    File.Delete(resourcePath);
                 }
             }
 
