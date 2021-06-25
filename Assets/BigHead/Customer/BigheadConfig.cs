@@ -45,14 +45,19 @@ public static class BigheadConfig
     public static readonly string ExcelPath = GameDataPath + "ExcelData";
     /// <summary> 自动生成代码文件路径 </summary>
     public static readonly string GenerateCsPath = Application.dataPath + "/Scripts/GenerateCs/Csv/";
+
+    /// <summary> 动态生成Csv的路径 </summary>
+    public static readonly string DynamicDirectory = "CsvData/DynamicCsv";
+    /// <summary> 非动态生成Csv的路径 </summary>
+    public static readonly string ConstDirectory = "CsvData/ConstCsv";
     /// <summary> 动态生成Csv配置文件存储路径 </summary>
-    public static readonly string DynamicCsvPath = GameDataPath + "CsvData/DynamicCsv";
+    public static readonly string DynamicCsvPath = GameDataPath + DynamicDirectory;
     /// <summary> 非生成Csv配置文件存储路径 </summary>
-    public static readonly string ConstCsvPath = GameDataPath + "CsvData/ConstCsv";
+    public static readonly string ConstCsvPath = GameDataPath + ConstDirectory;
     /// <summary> Resources配置文件路径 </summary>
-    public static readonly string ResourcesDynamicCsvPath = Application.dataPath + "/Resources/Csv/DynamicCsv";
+    public static readonly string ResourcesDynamicCsvPath = Application.dataPath + "/Resources/" + DynamicDirectory;
     /// <summary> Resources配置文件路径 </summary>
-    public static readonly string ResourcesConstCsvPath = Application.dataPath + "/Resources/Csv/ConstCsv";
+    public static readonly string ResourcesConstCsvPath = Application.dataPath + "/Resources/" + ConstDirectory;
     /// <summary> 同步生成Csv文件在Resources文件夹中 </summary>
     public const bool GenerateCsvInResources = true;
 

@@ -98,7 +98,7 @@ namespace BigHead.Editor.Generate.GenCsv
             var foo = genClass.AddFoo($"Get{fileName}", fileName);
             foo.Modifier = GenBasic.GenBasic.modifier.Public_Static;
             foo
-                .AddDetail($"if(_instance{fileName}.Equals(null)) _instance{fileName} = CsvFunctions.GetCsv<{fileName}>(\"{fileName}\");")
+                .AddDetail($"if(Equals(null, _instance{fileName})) _instance{fileName} = CsvFunctions.GetCsv<{fileName}>(\"{fileName}\");")
                 .AddDetail($"return _instance{fileName};");
             var prop = genClass.AddProperty($"_instance{fileName}", fileName);
             prop.Modifier = GenBasic.GenBasic.modifier.Private_Static;
@@ -184,12 +184,16 @@ namespace BigHead.Editor.Generate.GenCsv
                     .SetValue($"new Dictionary<string, {rowName}>()");
             dictProp.Modifier = GenBasic.GenBasic.modifier.Protected;
 
+            var middleName = new DirectoryInfo(Path.GetDirectoryName(path)).Name;
+            middleName = BigheadConfig.DynamicDirectory.EndsWith(middleName)
+                ? BigheadConfig.DynamicDirectory
+                : BigheadConfig.ConstDirectory;
             var pathProp =
                 genClass
                     .AddProperty("Path", "string")
                     .SetSet(true)
                     .SetGet(true)
-                    .SetValue($"\"DynamicCsv/{baseName}.csv\"")
+                    .SetValue($"\"{middleName}/{baseName}.csv\"")
                     .SetOverrider(true);
             pathProp.Modifier = GenBasic.GenBasic.modifier.Protected;
 
