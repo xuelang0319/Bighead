@@ -10,10 +10,6 @@ using UnityEngine;
 
 public static class BigheadConfig
 {
-    /// <summary> Speaker封装类打印开关，非调试期请关闭. </summary>
-    public const bool Debug = true;
-
-
     /* ------------------
      * Load asset part.
      * ------------------*/
