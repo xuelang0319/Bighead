@@ -16,6 +16,9 @@ namespace BigHead.Framework.Pool
 {
     public static class PoolAssistant
     {
+        /// <summary>
+        /// 普通全局对象池，只能挂载非MonoBehaviour的对象池。
+        /// </summary>
         public static Pool<T> GetPool<T>(
             Func<T> createFoo = null,
             Action<T> recycleFoo = null, 
@@ -24,7 +27,10 @@ namespace BigHead.Framework.Pool
             return new Pool<T>(createFoo, recycleFoo, clearFoo);
         }
 
-        public static MonoPool<T> GetMonoPool<T>(
+        /// <summary>
+        /// Mono场景对象池，可以挂载所有对象，切换场景时清除所有存储对象。
+        /// </summary>
+        public static MonoPool<T> GetMonoScenePool<T>(
             string parentName,
             Func<T> createFoo = null,
             Action<T> recycleFoo = null,
@@ -32,15 +38,29 @@ namespace BigHead.Framework.Pool
         {
             return new MonoPool<T>(parentName, createFoo, recycleFoo, clearFoo);
         }
+        
+        /// <summary>
+        /// Mono场景对象池，可以挂载所有对象，存储对象不会随着切换场景而清除。
+        /// </summary>
+        public static MonoPool<T> GetMonoGlobalPool<T>(
+            string parentName,
+            Func<T> createFoo = null,
+            Action<T> recycleFoo = null,
+            Action<T> clearFoo = null) where T : class
+        {
+            var pool = new MonoPool<T>(parentName, createFoo, recycleFoo, clearFoo);
+            Object.DontDestroyOnLoad(pool.Parent);
+            return pool;
+        }
     }
 
     public class Pool<T> where T : class
     {
         private readonly Stack<T> _pool;
 
-        private Func<T> _createFoo;
-        private Action<T> _recycleFoo;
-        private Action<T> _clearFoo;
+        private readonly Func<T> _createFoo;
+        private readonly Action<T> _recycleFoo;
+        private readonly Action<T> _clearFoo;
 
         public Pool(Func<T> createFoo = null, Action<T> recycleFoo = null, Action<T> clearFoo = null)
         {
@@ -75,8 +95,8 @@ namespace BigHead.Framework.Pool
     public class MonoPool<T> where T : class
     {
         private readonly Pool<T> _pool;
-        public Transform Parent { get; }
-
+        public Transform Parent { get; set; }
+        
         public MonoPool(string parentName = "", 
             Func<T> createFoo = null, 
             Action<T> recycleFoo = null, 
@@ -91,6 +111,9 @@ namespace BigHead.Framework.Pool
             {
                 if (item is GameObject gameObject)
                     gameObject.transform.SetParent(Parent);
+                
+                else if(item is Component com)
+                    com.transform.SetParent(Parent);
                 
                 recycleFoo?.Invoke(item);
             }), 
