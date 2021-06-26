@@ -16,7 +16,7 @@ namespace BigHead.Framework.Game
     {
         private Dictionary<string, List<Action<object[]>>> _listeners = new Dictionary<string, List<Action<object[]>>>();
         
-        public void Broadcast(string key, object[] message)
+        public void Broadcast(string key, params object[] message)
         {
             if (!_listeners.ContainsKey(key)) return;
             _listeners[key].ForEach(action => action?.Invoke(message));
