@@ -1,13 +1,7 @@
 ﻿/.idea/.idea.BigHead/
-/Library/
-/Logs/
-/obj/Debug/
-/Packages/
-/ProjectSettings/
 /Assembly-CSharp.csproj
 /Assembly-CSharp-Editor.csproj
 /BigHead.sln
 /BigHead.sln.DotSettings.user
 /UniRx.csproj
 /UniRx.Examples.csproj
-/Temp
