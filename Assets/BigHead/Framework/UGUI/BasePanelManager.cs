@@ -111,10 +111,11 @@ public abstract class BasePanelManager<T> : MonoGlobalSingleton<T> where T : Bas
         if (_eventSystem)
             return canvas;
 
-        _eventSystem = new GameObject("EventSystem").AddComponent<EventSystem>();
-        _eventSystem.gameObject.AddComponent<StandaloneInputModule>();
+        var eventObject = new GameObject("EventSystem");
+        _eventSystem = eventObject.AddComponent<EventSystem>();
+        eventObject.AddComponent<StandaloneInputModule>();
 
-        DontDestroyOnLoad(_eventSystem.gameObject);
+        DontDestroyOnLoad(eventObject);
         return canvas;
     }
 }
