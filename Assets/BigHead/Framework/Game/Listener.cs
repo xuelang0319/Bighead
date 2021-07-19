@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using BigHead.Framework.Core;
+using BigHead.Framework.Extension;
 
 namespace BigHead.Framework.Game
 {
@@ -35,7 +36,7 @@ namespace BigHead.Framework.Game
                     if (!_listeners.ContainsKey(item.Key))
                         _listeners[item.Key] = new List<Action<object[]>>();
             
-                    _listeners[item.Key].Add(item.Callback);
+                    _listeners[item.Key].AddUniqueValue(item.Callback);
                 }
             }
 
