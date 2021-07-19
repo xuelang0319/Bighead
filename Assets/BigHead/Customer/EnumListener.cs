@@ -8,8 +8,6 @@
 
 public enum EnumListener
 {
-    /// <summary> 语言变更事件 </summary>
-    Language,
     /// <summary> 音效变更事件 </summary>
     SoundVolume,
     /// <summary> 音乐变更事件 </summary>
@@ -22,4 +20,9 @@ public enum EnumListener
     Pause,
     /// <summary> 恢复事件 </summary>
     Resume,
+    /// <summary> 热更响应 </summary>
+    HotfixResponse,
+    
+    /// <summary> 语言变更事件 - 客用监听接口 </summary>
+    Language,
 }
