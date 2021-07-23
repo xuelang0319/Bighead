@@ -15,7 +15,7 @@ using BigHead.Framework.Extension;
 
 namespace BigHead.Framework.Game
 {
-    public class Listener : Singleton<Listener>
+    public sealed class Listener : Singleton<Listener>
     {
         public class ListenerItem
         {
