@@ -34,6 +34,13 @@ namespace BigHead.Framework.Extension
             list.Add(value); 
             return true;
         }
+        
+        public static bool AddUniqueValue<T>(this HashSet<T> list, T value)
+        {
+            if (Equals(null, list) || list.Contains(value)) return false;
+            list.Add(value); 
+            return true;
+        }
 
         public static void AddValueAndLogError<T>(this List<T> list, T value)
         {
