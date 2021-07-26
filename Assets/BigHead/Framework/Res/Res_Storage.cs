@@ -8,19 +8,43 @@
 
 using System.Collections.Generic;
 using BigHead.Framework.Core;
+using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 public partial class Res
 {
     /// <summary> 预加载资源 </summary>
-    private Dictionary<string, object> _preloads = new Dictionary<string, object>();
+    private Dictionary<string, PreloadItem> _preloads = new Dictionary<string, PreloadItem>();
+
+    public class PreloadItem
+    {
+        public object Value;
+        public EnumAssetSource AssetSource;
+    }
+    
+    public enum EnumAssetSource
+    {
+        Addressable,
+        Resources
+    }
+
+    /// <summary>
+    /// 检测资源是否存在
+    /// </summary>
+    /// <param name="key">资源键</param>
+    /// <returns>是否存在</returns>
+    public bool ContainKey(string key)
+    {
+        return _preloads.ContainsKey(key);
+    }
 
     /// <summary>
     /// 注册预加载资源
     /// </summary>
     /// <param name="key">资源Key</param>
     /// <param name="value">资源</param>
-    public void Register(string key, object value)
+    /// <param name="source">资源来源</param>
+    public void Register(string key, object value, EnumAssetSource source)
     {
         if (_preloads.ContainsKey(key))
         {
@@ -28,7 +52,7 @@ public partial class Res
             return;
         }
 
-        _preloads[key] = value;
+        _preloads[key] = new PreloadItem() {Value = value, AssetSource = source};
     }
 
     /// <summary>
@@ -72,6 +96,18 @@ public partial class Res
             $"This resource is not registered, please check. Resource Key: {key}".Exception();
             return;
         }
-        Addressables.Release(key);
+
+        var asset = _preloads[key];
+        _preloads.Remove(key);
+        
+        if (Equals(asset.AssetSource, EnumAssetSource.Addressable))
+        {
+            Addressables.Release(key);
+        }
+        
+        if (Equals(asset.AssetSource, EnumAssetSource.Resources))
+        {
+            Resources.UnloadAsset((Object) asset.Value);
+        }
     }
 }
