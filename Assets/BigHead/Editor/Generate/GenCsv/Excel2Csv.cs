@@ -52,7 +52,6 @@ namespace BigHead.Editor.Generate.GenCsv
         private static void DeleteDynamicCsv()
         {
             DirectoryHelper.ClearDirectory(DynamicCsvPath);
-            DirectoryHelper.ClearDirectory(ResourcesDynamicCsvPath);
         }
 
         private static void DeleteConfig()
@@ -65,8 +64,6 @@ namespace BigHead.Editor.Generate.GenCsv
         {
             DirectoryHelper.ForceCreateDirectory(DynamicCsvPath);
             DirectoryHelper.ForceCreateDirectory(ConstCsvPath);
-            DirectoryHelper.ForceCreateDirectory(ResourcesDynamicCsvPath);
-            DirectoryHelper.ForceCreateDirectory(ResourcesConstCsvPath);
 
             // 上一次生成存储的MD5数据
             var oldDatas = new Dictionary<string, string>();
@@ -114,10 +111,6 @@ namespace BigHead.Editor.Generate.GenCsv
                     {
                         // 数据发生变化
                         Csv2Cs.GenerateCs(constPath);
-                        // 复制文件到Resources文件夹中
-                        if (GenerateCsvInResources)
-                            File.Copy(constPath, $"{ResourcesConstCsvPath}/{fileNameWithExtension}", true);
-
                         if (oldDatas.ContainsKey(fileNameWithExtension))
                             oldDatas.Remove(fileNameWithExtension);
                     }
@@ -264,7 +257,6 @@ namespace BigHead.Editor.Generate.GenCsv
                             newDatas.Add(dataName, md5);
 
                             var bundleDynamicPath = $"{DynamicCsvPath}/{tableName}.csv";
-                            var resourceDynamicPath = $"{ResourcesDynamicCsvPath}/{tableName}.csv";
                             
                             // 如果进入判断说明存在，否则为新增
                             if (oldDatas.ContainsKey(dataName))
@@ -283,10 +275,6 @@ namespace BigHead.Editor.Generate.GenCsv
                                 var csvPath = GenerateCsPath + tableName + "Csv.cs";
                                 File.Delete(rowPath);
                                 File.Delete(csvPath);
-                            
-
-                                if (GenerateCsvInResources)
-                                    File.Delete(resourceDynamicPath);
                             }
 
                             var data = Encoding.UTF8.GetBytes(str);
@@ -296,14 +284,6 @@ namespace BigHead.Editor.Generate.GenCsv
                             }
                             
                             Csv2Cs.GenerateCs(bundleDynamicPath);
-                            
-                            if(GenerateCsvInResources)
-                            {
-                                using (var fileStream = new FileStream(resourceDynamicPath, FileMode.Create))
-                                {
-                                    fileStream.Write(data, 0, data.Length);
-                                }
-                            }
                         }
                     }
                 }
@@ -337,15 +317,6 @@ namespace BigHead.Editor.Generate.GenCsv
                 var csvPath = GenerateCsPath + csvName + "Csv.cs";
                 File.Delete(rowPath);
                 File.Delete(csvPath);
-
-                if (GenerateCsvInResources)
-                {
-                    var resourcePath = Equals(array.Length, 1)
-                        ? $"{ResourcesConstCsvPath}/{csvName}.csv"
-                        : $"{ResourcesDynamicCsvPath}/{csvName}.csv";
-                    
-                    File.Delete(resourcePath);
-                }
             }
 
 

@@ -61,6 +61,7 @@ namespace BigHead.Customer
                 case "UNI:INT":
                 case "Uni:INT":
                 case "UNI:Int":
+                case "int":
                     return "int";
                 case "STR":
                 case "STRING":
@@ -74,15 +75,18 @@ namespace BigHead.Customer
                 case "UNI:STRING":
                 case "UNI:Str":
                 case "UNI:String":
+                case "string":
                     return "string";
                 case "BOOL":
                 case "Bool":
                 case ":Bool":
                 case ":bool":
+                case "bool":
                     return "bool";
                 case "FLOAT":
                 case "Float":
                 case ":float":
+                case "float":
                 case ":FLO":
                     return "float";
                 case "[INT]":
@@ -90,27 +94,32 @@ namespace BigHead.Customer
                 case ":Array:Int":
                 case "INT[]":
                 case "Int[]":
+                case "int[]":
                     return "int[]";
                 case "[[INT]]":
                 case "[[Int]]":
                 case ":Array:Int[]":
                 case "INT[][]":
                 case "Int[][]":
+                case "int[,]":
                     return "int[,]";
                 case "[STRING]":
                 case "[STR]":
                 case "[Str]":
                 case ":Array:Str":
+                case "string[]":
                     return "string[]";
                 case "[BOOL]":
                 case "[Bool]":
                 case ":Array:Bool":
                 case ":Array:bool":
+                case "bool[]":
                     return "bool[]";
                 case "[FLOAT]":
                 case "[Float]":
                 case ":Array:float":
                 case ":Array:FLO":
+                case "float[]":
                     return "float[]";
                 default:
                     throw new Exception($"转换CSV属性类型错误，值: {str}");

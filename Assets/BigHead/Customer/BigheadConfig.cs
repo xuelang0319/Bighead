@@ -10,9 +10,9 @@ using UnityEngine;
 
 public static class BigheadConfig
 {
- /* ------------------
-  * Game data part.
-  * ------------------*/
+    /* ------------------
+     * Game data part.
+     * ------------------*/
     /// <summary> 游戏数据管理路径 </summary>
     private static readonly string GameDataPath = Application.dataPath + "/Editor/GameData/";
     
@@ -42,12 +42,6 @@ public static class BigheadConfig
     public static readonly string DynamicCsvPath = GameDataPath + DynamicDirectory;
     /// <summary> 非生成Csv配置文件存储路径 </summary>
     public static readonly string ConstCsvPath = GameDataPath + ConstDirectory;
-    /// <summary> Resources配置文件路径 </summary>
-    public static readonly string ResourcesDynamicCsvPath = Application.dataPath + "/Resources/" + DynamicDirectory;
-    /// <summary> Resources配置文件路径 </summary>
-    public static readonly string ResourcesConstCsvPath = Application.dataPath + "/Resources/" + ConstDirectory;
-    /// <summary> 同步生成Csv文件在Resources文件夹中 </summary>
-    public const bool GenerateCsvInResources = true;
 
         
     /* ------------------
