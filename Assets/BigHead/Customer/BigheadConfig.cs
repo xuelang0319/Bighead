@@ -27,13 +27,12 @@ public static class BigheadConfig
         
         
     /* ------------------
-     * Generate .cs part.
+     * Csv Generate .cs part.
      * ------------------*/
     /// <summary> Excel 配置文件存储路径 </summary>
     public static readonly string ExcelPath = GameDataPath + "ExcelData";
     /// <summary> 自动生成代码文件路径 </summary>
     public static readonly string GenerateCsPath = Application.dataPath + "/Scripts/GenerateCs/Csv/";
-
     /// <summary> 动态生成Csv的路径 </summary>
     public static readonly string DynamicDirectory = "CsvData/DynamicCsv";
     /// <summary> 非动态生成Csv的路径 </summary>
