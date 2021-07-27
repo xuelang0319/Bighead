@@ -3,7 +3,7 @@
 // = Cannot be commercially used without the authorization.
 //
 //  Author  |  UpdateTime     |   Desc  
-//  Eric    |  2021年7月26日   |   Addressable 资源加载，在有可能切换加载方式的前提下建议使用Res_Common提供的方法进行加载。
+//  Eric    |  2021年7月26日   |   Addressable 资源加载。
 //
 
 using System;
@@ -24,7 +24,7 @@ public partial class Res
     /// <param name="key">资源键</param>
     /// <param name="callback">完成回调</param>
     /// <typeparam name="T">资源类型</typeparam>
-    public void AddressableLoadAsset<T>(string key, Action<T> callback)
+    public void LoadAsset<T>(string key, Action<T> callback)
     {
         if (ContainKey(key))
         {
@@ -68,7 +68,7 @@ public partial class Res
     /// </summary>
     /// <param name="keys">预加载资源键集合</param>
     /// <param name="residueCallback">剩余数量回调，完成时为0</param>
-    public void AddressablePreloadAssets(IEnumerable<string> keys, Action<int> residueCallback)
+    public void PreloadAssets(IEnumerable<string> keys, Action<int> residueCallback)
     {
         if (Equals(null, keys))
         {
@@ -88,7 +88,7 @@ public partial class Res
         for (int i = 0; i < unloadKeys.Length; i++)
         {
             var key = unloadKeys[i];
-            AddressableLoadAsset<object>(key, asset =>
+            LoadAsset<object>(key, asset =>
             {
                 --unloadCount;
                 residueCallback?.Invoke(unloadCount);
@@ -102,7 +102,7 @@ public partial class Res
     /// <param name="label">资源标签</param>
     /// <param name="callback">完成回调</param>
     /// <typeparam name="T">资源类型</typeparam>
-    public void AddressableLoadAssetsByLabel<T>(string label, Action<IList<T>> callback)
+    public void LoadAssetsByLabel<T>(string label, Action<IList<T>> callback)
     {
         if (ContainKey(label))
         {
@@ -146,7 +146,7 @@ public partial class Res
     /// </summary>
     /// <param name="keys">资源集合键</param>
     /// <param name="residueCallback">剩余量回调</param>
-    public void AddressableReleaseAllAndPreloadAssets(IEnumerable<string> keys, Action<int> residueCallback)
+    public void ReleaseAllAndPreloadAssets(IEnumerable<string> keys, Action<int> residueCallback)
     {
         var enumerable = keys as string[] ?? keys.ToArray();
         if (Equals(enumerable.Length, 0))
@@ -160,6 +160,6 @@ public partial class Res
             UnRegister(uselessKey);
 
         var preloadKeys = enumerable.Except(_preloads.Keys);
-        AddressablePreloadAssets(preloadKeys, residueCallback);
+        PreloadAssets(preloadKeys, residueCallback);
     }
 }

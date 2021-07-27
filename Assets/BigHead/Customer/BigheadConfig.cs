@@ -10,21 +10,9 @@ using UnityEngine;
 
 public static class BigheadConfig
 {
-    /* ------------------
-     * Load asset part.
-     * ------------------*/
-    /// <summary> 预制体资源加载 </summary>
-    public const bool LoadInBundle_Prefab = false;
-    /// <summary> 图片资源加载 </summary>
-    public const bool LoadInBundle_Sprite = false;
-    /// <summary> 配置资源加载 </summary>
-    public const bool LoadInBundle_Config = false;
-    /// <summary> 音效资源加载 </summary>
-    public const bool LoadInBundle_Sound = false;
-    
-    /* ------------------
-     * Game data part.
-     * ------------------*/
+ /* ------------------
+  * Game data part.
+  * ------------------*/
     /// <summary> 游戏数据管理路径 </summary>
     private static readonly string GameDataPath = Application.dataPath + "/Editor/GameData/";
     

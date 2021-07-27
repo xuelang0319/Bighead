@@ -26,19 +26,9 @@ namespace BigHead.Framework.Utility.Readers
         /// </summary>
         public static void ReadCsv(string key, Action<string> callback)
         {
-            if (BigheadConfig.LoadInBundle_Config)
-            {
-                // TODO: 将引用Addressable或重写一套打包工具
-            }
-            else
-            {
-                key = key.Replace(".csv", "");
-                var asset = Resources.Load<TextAsset>(key);
-                if(asset) callback?.Invoke(asset.text);
-                else $"没有加载到CSV配置表，请检查Resource目录下文件路径是否正确 - 路径 : {key}".Exception();
-            }
+            Res.Instance.LoadAsset<TextAsset>(key, asset => callback?.Invoke(asset.text));
         }
-        
+
         /// <summary>
         /// 路径读取文件操作
         /// </summary>
