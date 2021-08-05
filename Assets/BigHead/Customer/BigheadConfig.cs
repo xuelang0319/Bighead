@@ -23,7 +23,11 @@ public static class BigheadConfig
     /// <summary> 配置信息管理路径 </summary>
     public static readonly string ConfigPath = GameDataPath + "Configs/";
     /// <summary> csv生成信息存储 </summary>
-    public static readonly string CsvConfigFullName = ConfigPath + "CsvConfig";
+    public static readonly string CsvConfigFullName = ConfigPath + "CsvConfig.bh";
+    /// <summary> tmx信息存储文件名称 </summary>
+    public static readonly string TmxConfigName = "TmxConfig.bh";
+    /// <summary> tmx生成信息存储 </summary>
+    public static readonly string TmxConfigFullName = ConfigPath + TmxConfigName;
         
         
     /* ------------------
@@ -41,8 +45,29 @@ public static class BigheadConfig
     public static readonly string DynamicCsvPath = GameDataPath + DynamicDirectory;
     /// <summary> 非生成Csv配置文件存储路径 </summary>
     public static readonly string ConstCsvPath = GameDataPath + ConstDirectory;
+    
+    /* ------------------
+     * Tmx Generate .txt part.
+     * ------------------*/
+    /// <summary> Tmx 配置文件存储路径 </summary>
+    public static readonly string TmxPath = GameDataPath + "TmxData";
+    /// <summary> 生成的Txt文件路径 </summary>
+    public static readonly string TxtPath = GameDataPath + "TxtData";
+    
+    /*
+     * 这里的设置类似于：
+     * 源文件Tmx路径： C:/xxx/xxx/Assets/Editor/GameData/TmxData/1/2/3/xxxx.tmx;
+     * 生成后Txt路径： C:/xxx/xxx/Assets/Resources/GameData/Gen/TmxData/1/2/3/xxxx.txt;
+     * 则 ~ 
+     * TmxOldReplace为：Editor/GameData
+     * TmxNewReplace为：Resources/GameData/Gen
+     */
+    /// <summary> 相对于TmxPath, TxtPath需要删除的旧路径 </summary>
+    public static readonly string TmxOldReplace = "TmxData";
+    /// <summary> 相对于TmxPath, TxtPath需要填写的新路径 </summary>
+    public static readonly string TmxNewReplace = "TxtData";
+    
 
-        
     /* ------------------
      * App part
      * ------------------*/
