@@ -81,7 +81,36 @@ namespace BigHead.Framework.Utility.Helper
         public static void DeleteFile(string path)
         {
             if(File.Exists(path)) File.Delete(path);
-            else $"删除废弃脚本时没有找到对应的生成.cs文件,路径：{path}".Error(); 
+            var directoryName = Path.GetDirectoryName(path);
+            if (Equals(directoryName, null)) return;
+            if (!Directory.Exists(directoryName)) return;
+            var files = Directory.GetFiles(directoryName);
+            if (files.Length > 0) return;
+            
+            Directory.Delete(directoryName);
+            DeleteMeta(directoryName);
+        }
+
+        /// <summary>
+        /// 同时删除Unity系统中的文件和Meta文件
+        /// </summary>
+        public static void DeleteUnityFile(string path)
+        {
+            DeleteMeta(path);
+            DeleteFile(path);
+        }
+
+        /// <summary>
+        /// 删除Unity的Meta文件
+        /// </summary>
+        public static void DeleteMeta(string path)
+        {
+            if (string.IsNullOrEmpty(path)) 
+                return;
+
+            path += ".meta";
+            if(File.Exists(path)) 
+                File.Delete(path);
         }
     }
 }

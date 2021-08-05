@@ -8,6 +8,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using BigHead.Framework.Core;
 
 namespace BigHead.Framework.Utility.Helper
@@ -46,22 +47,33 @@ namespace BigHead.Framework.Utility.Helper
         /// </summary>
         public static void ClearDirectory(string path)
         {
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-
-            var files = Directory.GetFiles(path, "*", SearchOption.AllDirectories);
-
-            // 删除文件夹内的文件
-            foreach (var file in files)
+            try
             {
-                File.Delete(file);
+                if (!Directory.Exists(path)) return;
+                var directoryInfo = new DirectoryInfo(path);
+                directoryInfo.Attributes = FileAttributes.Normal & FileAttributes.Directory;
+                File.SetAttributes(path, FileAttributes.Normal);
+
+                if (!Directory.Exists(path))
+                {
+                    $"Delete directory failed. Do not exist {path}".Exception();
+                    return;
+                }
+
+                foreach (string file in Directory.GetFileSystemEntries(path))
+                {
+                    if (File.Exists(file))
+                        File.Delete(file);
+                    else
+                        ClearDirectory(file);
+                }
+                
+                Directory.Delete(path);
             }
-
-            // 删除文件夹的所有子文件夹
-            var dirs = Directory.GetDirectories(path, "*", SearchOption.AllDirectories);
-            foreach (var dir in dirs)
+            catch (Exception e)
             {
-                Directory.Delete(dir);
+                $"Delete directory failed. {path}".Exception();
+                e.Exception();
             }
         }
     }
