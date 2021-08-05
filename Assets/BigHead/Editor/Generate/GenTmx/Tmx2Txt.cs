@@ -21,6 +21,16 @@ using static BigheadConfig;
 
 namespace BigHead.Editor.Generate.GenTmx
 {
+    /*
+     * Txt生成格式：（目前不能解析无限Tmx格式数据）
+     *
+     * 第一行为宽、高，用 ‘，’ 分割， 即：width, height
+     * 例： 100,120
+     *
+     * 其它行为层级名称和具体数据，层级名称和数据使用 '|' 分割，数据遵循Tmx格式分割。 层级名称|数据
+     * 例： layerName|0,0,0,0,0,0
+     */
+    
     public static class Tmx2Txt
     {
         public static void ClearAll()
