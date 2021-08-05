@@ -57,7 +57,7 @@ namespace BigHead.Editor.Generate.GenCsv
         private static void DeleteConfig()
         {
             var configPath = CsvConfigFullName;
-            FileHelper.DeleteFile(configPath);
+            FileHelper.DeleteUnityFile(configPath);
         }
 
         private static void AnalysisExcel()
