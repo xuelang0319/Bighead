@@ -158,15 +158,18 @@ namespace BigHead.Editor.Generate.GenTmx
                         if (Equals(realId, lastId))
                         {
                             ++sameCount;
-                            
-                            if(!Equals(i, value.Length - 1)) 
-                                continue;
                         }
-                        
-                        dataBuilder.Append($"{lastId},{sameCount}|");
-                        
-                        lastId = realId;
-                        sameCount = 1;
+                        else
+                        {
+                            dataBuilder.Append($"{lastId},{sameCount}|");
+                            lastId = realId;
+                            sameCount = 1;
+                        }
+
+                        if (Equals(i, value.Length - 1))
+                        {
+                            dataBuilder.Append($"{lastId},{sameCount}");
+                        }
                     }
 
                     fileBuilder.Append(layer.Key).Append("|").Append(dataBuilder.ToString().TrimEnd('|'));
