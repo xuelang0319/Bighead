@@ -64,6 +64,16 @@ namespace BigHead.Editor.Toolbar
             rightRect.xMax -= 10;
             rightRect.y = 5;
             rightRect.height = 24;
+
+            if (Screen.dpi > 1)
+            {
+                // 适应竖屏，如果横屏可以删掉下列参数
+                rightRect.xMax += 100;
+                rightRect.xMin -= 100;
+            }
+            
+            rightRect.y = 5;
+            rightRect.height = 24;
             
             if (rightRect.width > 0)
             {
