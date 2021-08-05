@@ -142,13 +142,34 @@ namespace BigHead.Editor.Generate.GenTmx
                 {
                     var dataBuilder = new StringBuilder();
                     var value = layer.Value;
+
+                    int lastId = 0;
+                    int sameCount = 0;
                     for (int i = 0; i < value.Length; i++)
                     {
                         var realId = Equals(value[i], 0) ? 0 : GetRealId(value[i], firstIds);
-                        dataBuilder.Append(realId).Append(",");
+                        if (Equals(i, 0))
+                        {
+                            lastId = realId;
+                            sameCount = 1;
+                            continue;
+                        }
+                        
+                        if (Equals(realId, lastId))
+                        {
+                            ++sameCount;
+                            
+                            if(!Equals(i, value.Length - 1)) 
+                                continue;
+                        }
+                        
+                        dataBuilder.Append($"{lastId},{sameCount}|");
+                        
+                        lastId = realId;
+                        sameCount = 1;
                     }
 
-                    fileBuilder.Append(layer.Key).Append("|").Append(dataBuilder.ToString().TrimEnd(','));
+                    fileBuilder.Append(layer.Key).Append("|").Append(dataBuilder.ToString().TrimEnd('|'));
 
                     ++count;
                     if (!Equals(count, layers.Count)) fileBuilder.AppendLine();
