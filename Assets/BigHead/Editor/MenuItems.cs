@@ -8,6 +8,7 @@
 
 using BigHead.Editor.ArtTools;
 using BigHead.Editor.Generate.GenCsv;
+using BigHead.Editor.Generate.GenTmx;
 using UnityEditor;
 using UnityEngine;
 
@@ -31,16 +32,28 @@ namespace BigHead.Editor
             
         }
         
+        [MenuItem("BigHead/Csv/Generate", false, 10)]
+        public static void GenCsv()
+        {
+            Excel2Csv.Generate();
+        }
+        
         [MenuItem("BigHead/Csv/Clear")]
         public static void ClearGenCsv()
         {
             Excel2Csv.ClearAll();
         }
         
-        [MenuItem("BigHead/Csv/Generate")]
-        public static void GenCsv()
+        [MenuItem("BigHead/Tmx/Generate", false, 30)]
+        public static void GenTmx()
         {
-            Excel2Csv.Generate();
+            Tmx2Txt.Generate();
+        }
+        
+        [MenuItem("BigHead/Tmx/Clear")]
+        public static void ClearTmxCsv()
+        {
+            Tmx2Txt.ClearAll();
         }
 
         [MenuItem("BigHead/ArtTools/GetSelectionVertexes")]

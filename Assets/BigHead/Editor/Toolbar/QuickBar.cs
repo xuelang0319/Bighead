@@ -12,6 +12,7 @@
 
 using BigHead.Editor.Customer;
 using BigHead.Editor.Generate.GenCsv;
+using BigHead.Editor.Generate.GenTmx;
 using UnityEditor;
 using UnityEngine;
 
@@ -48,6 +49,7 @@ namespace BigHead.Editor.Toolbar
                 EditorGUIUtility.IconContent("Collab.BuildSucceeded"),
                 CommandStyle.Style))
             {
+                Tmx2Txt.Generate();
             }
 
 
