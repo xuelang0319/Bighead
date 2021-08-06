@@ -130,7 +130,8 @@ namespace BigHead.Editor.Generate.GenTmx
                         continue;
 
                     // 说明曾经存在，但数据出现了变化，需要将原数据删除
-                    FileHelper.DeleteUnityFile(path);
+                    var txtPath = path.Replace(tmxOldReplace, tmxNewReplace).Replace(".tmx", ".txt");
+                    FileHelper.DeleteUnityFile(txtPath);
                 }
                 
                 ReadTmx(content, out var width, out var height, out var firstIds, out var layers);
