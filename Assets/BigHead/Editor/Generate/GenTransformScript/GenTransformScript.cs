@@ -38,7 +38,7 @@ namespace BigHead.Editor.Generate.GenTransformScript
                 var obj = selections[i];
                 var fullName = param.HeadName + obj.name;
 
-                var genClass = new GenClass(0, fullName) {Parent = param.Parent, Modifier = param.ClassModifier};
+                var genClass = new GenClass(0, fullName) {Parent = param.Parent, Modifier = param.ClassModifier, IsPartial = true};
                 if (param.VirtualType) genClass.virtualType = fullName;
                 for (var j = 0; j < param.Usings.Count; j++)
                     genClass.AddUsing(param.Usings[j]);
