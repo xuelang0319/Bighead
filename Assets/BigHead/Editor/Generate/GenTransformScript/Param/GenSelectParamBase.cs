@@ -13,7 +13,7 @@ namespace BigHead.Editor.Generate.GenTransformScript.Param
     public abstract class GenSelectParamBase
     {
         // 继承类
-        public virtual string Parent { get; }
+        public virtual string Parent { get; } = "MonoBehaviour";
         
         // 类修饰词
         public virtual GenBasic.GenBasic.modifier ClassModifier { get; } = GenBasic.GenBasic.modifier.Public;
