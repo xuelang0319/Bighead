@@ -81,7 +81,7 @@ namespace BigHead.Editor.Generate.GenBasic
             for (var i = 0; i < Usings.Count; i++)
             {
                 builder.Append(GetUsing(Usings[i]));
-                if (i == Usings.Count - 1) builder.Append(DoubleCharNewLine);
+                if (i == Usings.Count - 1) builder.Append(CharNewLine);
             }
 
             builder.Append(GetAnnotation());
@@ -115,7 +115,7 @@ namespace BigHead.Editor.Generate.GenBasic
                 if (i < Properties.Count - 1) detailBuilder.Append(CharNewLine);
             }
 
-            if (Foos.Count > 0) detailBuilder.Append(CharNewLine);
+            if (Foos.Count > 0) detailBuilder.AppendLine().Append(CharNewLine);
 
             for (int i = 0; i < Foos.Count; i++)
             {
@@ -123,7 +123,7 @@ namespace BigHead.Editor.Generate.GenBasic
                 if (i < Foos.Count - 1) detailBuilder.Append(CharNewLine);
             }
 
-            builder.Append(AddBraces(detailBuilder, false));
+            builder.AppendLine().Append(AddBraces(detailBuilder, false));
 
             return builder;
         }
