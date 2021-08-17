@@ -1,4 +1,12 @@
-﻿using BigHead.Editor.Generate.GenTransformScript;
+﻿//
+// = The script is part of BigHead and the framework is individually owned by Eric Lee.
+// = Cannot be commercially used without the authorization.
+//
+//  Author  |  UpdateTime     |   Desc  
+//  Eric    |  2021年08月17日  |   添加Hierarchy右键功能 （也会显示在MenuItem中的GameObject选项中）
+//
+
+using BigHead.Editor.Generate.GenTransformScript;
 using BigHead.Editor.Generate.GenTransformScript.Param;
 using UnityEditor;
 
