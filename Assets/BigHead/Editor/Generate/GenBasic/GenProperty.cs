@@ -54,7 +54,7 @@ namespace BigHead.Editor.Generate.GenBasic
 
         public override StringBuilder StartGenerate()
         {
-            var getset = "";
+            var getset = string.Empty;
             switch (_get)
             {
                 case true when _set:
@@ -70,9 +70,10 @@ namespace BigHead.Editor.Generate.GenBasic
                 }
             }
             
-            var value = string.IsNullOrEmpty(_value) ? "" : $" = {_value};";
-            var Override = this._override ? "override " : "";
-
+            var value = string.IsNullOrEmpty(_value) ? string.Empty : $" = {_value};";
+            var Override = _override ? "override " : "";
+            
+            if (string.IsNullOrEmpty(getset) && string.IsNullOrEmpty(value)) getset = ";";
             return new StringBuilder($"{Charactor}{GetAnnotation()}{GetModifier} {Override}{_type} {Name}{getset}{value}");
         }
     }

@@ -26,12 +26,6 @@ namespace BigHead.Editor
     
     public static class MenuItems
     {
-        [MenuItem("BigHead/Test")]
-        public static void Test()
-        {
-            
-        }
-        
         [MenuItem("BigHead/Csv/Generate", false, 10)]
         public static void GenCsv()
         {

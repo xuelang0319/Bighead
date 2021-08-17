@@ -50,7 +50,10 @@ namespace BigHead.Editor.Generate.GenTransformScript
                 GetAll(keyPair, obj.transform, (transform, s) =>
                 {
                     var fullType = keyPair[s];
-                    genClass.AddProperty(transform.name, fullType);
+                    var property = genClass.AddProperty(transform.name, fullType);
+                    property.Modifier = param.PropertyModifier;
+                    property.SetSet(param.PropertySet);
+                    property.SetGet(param.PropertyGet);
                     list.Add((transform, fullType));
                 });
 

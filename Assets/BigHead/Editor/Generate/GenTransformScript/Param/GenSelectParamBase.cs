@@ -32,12 +32,21 @@ namespace BigHead.Editor.Generate.GenTransformScript.Param
         
         // 初始化方法返回类型
         public virtual string FunctionReturnType { get; } = "void";
-        
+
         // 初始化方法修饰词
-        public virtual GenBasic.GenBasic.modifier FunctionModifier { get; } = GenBasic.GenBasic.modifier.Public;
+        public virtual GenBasic.GenBasic.modifier FunctionModifier { get; } = GenBasic.GenBasic.modifier.Private;
+
+        // 属性修饰词
+        public virtual GenBasic.GenBasic.modifier PropertyModifier { get; } = GenBasic.GenBasic.modifier.Private;
 
         // 初始化方法是否为继承复写类型
         public virtual bool FunctionOverride { get; } = false;
+
+        // 属性Get
+        public virtual bool PropertyGet { get; } = false;
+
+        // 属性Set
+        public virtual bool PropertySet { get; } = false;
 
         // 引用集
         public virtual List<string> Usings { get; }
