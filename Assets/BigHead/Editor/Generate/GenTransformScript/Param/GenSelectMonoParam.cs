@@ -1,4 +1,12 @@
-﻿using System.Collections.Generic;
+﻿//
+// = The script is part of BigHead and the framework is individually owned by Eric Lee.
+// = Cannot be commercially used without the authorization.
+//
+//  Author  |  UpdateTime     |   Desc  
+//  Eric    |  2021年8月17日   |   Mono参数
+//
+
+using System.Collections.Generic;
 
 namespace BigHead.Editor.Generate.GenTransformScript.Param
 {
