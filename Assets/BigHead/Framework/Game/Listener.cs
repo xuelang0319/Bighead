@@ -17,105 +17,174 @@ namespace BigHead.Framework.Game
 {
     public sealed class Listener : Singleton<Listener>
     {
-        public class ListenerItem
-        {
-            public string Key;
-            public Action<object[]> Callback;
-        }
+        /// <summary> 执行状态 </summary>
+        private bool _working = false;
         
         /// <summary> 监听器集合 </summary>
-        private Dictionary<string, HashSet<Action<object[]>>> _listeners = new Dictionary<string, HashSet<Action<object[]>>>();
+        private readonly Dictionary<string, HashSet<Action<object[]>>> _listeners =
+            new Dictionary<string, HashSet<Action<object[]>>>();
+        
         /// <summary> 滞留消息集合 </summary>
-        private Dictionary<string, HashSet<object[]>> _storeMessages = new Dictionary<string, HashSet<object[]>>();
-        /// <summary> 等待加入集合 </summary>
-        private Queue<ListenerItem> _waitAdd = new Queue<ListenerItem>();
-        /// <summary> 等待移除集合 </summary>
-        private Queue<ListenerItem> _waitRemove = new Queue<ListenerItem>();
+        private readonly Dictionary<string, HashSet<object[]>> _storeMessages = 
+            new Dictionary<string, HashSet<object[]>>();
 
-        /// <summary>
-        /// 广播信息，如果没有监听者将存储起来，当第一个监听者加入时统一进行接收
-        /// </summary>
-        public void BroadcastStorageMessage(string key, params object[] message)
-        {
-            CheckState();
-            if (_listeners.ContainsKey(key))
-            {
-                foreach (var action in _listeners[key])
-                    action?.Invoke(message);
-            }
-            else
-            {
-                if (!_storeMessages.ContainsKey(key))
-                    _storeMessages[key] = new HashSet<object[]>();
-                _storeMessages[key].Add(message);
-            }
-        }
-
-        /// <summary>
-        /// 广播信息
-        /// </summary>
-        public void Broadcast(string key, params object[] message)
-        {
-            CheckState();
-            if (!_listeners.ContainsKey(key)) return;
-            foreach (var action in _listeners[key])
-                action?.Invoke(message);
-        }
-
-        /// <summary>
-        /// 检查等待加入和移除状态
-        /// </summary>
-        private void CheckState()
-        {
-            if (_waitAdd.Count > 0)
-            {
-                while (_waitAdd.Count > 0)
-                {
-                    var item = _waitAdd.Dequeue();
-                    if (!_listeners.ContainsKey(item.Key))
-                        _listeners[item.Key] = new HashSet<Action<object[]>>();
+        /// <summary> 操作队列 </summary>
+        /// Type : 0 - BroadcastMessage, 1 - BroadcastStorageMessage, 2 - Add, 3 - Remove
+        private readonly Queue<(int type, string key, object[] param)> _waitOperations =
+            new Queue<(int type, string key, object[] param)>();
             
-                    _listeners[item.Key].AddUniqueValue(item.Callback);
-                }
-            }
-
-            if (_waitRemove.Count > 0)
-            {
-                while (_waitRemove.Count > 0)
-                {
-                    var item = _waitRemove.Dequeue();
-                    if (!_listeners.ContainsKey(item.Key) || !_listeners[item.Key].Contains(item.Callback))
-                    {
-                        $"Listener can not find callback with key: {item.Key}, please make sure you have register your callback before".Exception();
-                        return;
-                    }
-
-                    _listeners[item.Key].Remove(item.Callback);
-                    if (_listeners[item.Key].Count == 0)
-                        _listeners.Remove(item.Key);
-                }
-            }
+        /// <summary>
+        /// 广播消息
+        /// </summary>
+        /// <param name="key">广播主键</param>
+        /// <param name="param">参数</param>
+        public void Broadcast(string key, params object[] param)
+        {
+            AddOperation(0, key, param);
+        }
+        
+        /// <summary>
+        /// 广播消息，如果没有监听则会存储，广播给第一个存储进来的监听者
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="param"></param>
+        public void BroadcastStorageMessage(string key, params object[] param)
+        {
+            AddOperation(1, key, param);
         }
 
         /// <summary>
-        /// 添加监听器
+        /// 添加监听
         /// </summary>
+        /// <param name="key">监听主键</param>
+        /// <param name="callback">监听回调</param>
         public void Add(string key, Action<object[]> callback)
         {
-            _waitAdd.Enqueue(new ListenerItem {Key = key, Callback = callback});
-            if (!_storeMessages.ContainsKey(key)) return;
-            var hashset = _storeMessages[key];
-            _storeMessages.Remove(key);
-            foreach (var message in hashset)
-                callback?.Invoke(message);
+            AddOperation(2, key, callback);
+        }  
+        
+        /// <summary>
+        /// 移除监听
+        /// </summary>
+        /// <param name="key">监听主键</param>
+        /// <param name="callback">监听回调</param>
+        public void Remove(string key, Action<object[]> callback)
+        {
+            AddOperation(3, key, callback);
         }
 
         /// <summary>
-        /// 移除监听器
+        /// 添加操作
         /// </summary>
-        public void Remove(string key, Action<object[]> callback)
+        /// <param name="type">操作类型</param>
+        /// <param name="key">主键</param>
+        /// <param name="param">参数</param>
+        private void AddOperation(int type, string key, params object[] param)
         {
-            _waitRemove.Enqueue(new ListenerItem {Key = key, Callback = callback});
+            _waitOperations.Enqueue((type, key, param));
+            StartWorking();
+        }
+
+        /// <summary>
+        /// 开始工作
+        /// </summary>
+        private void StartWorking()
+        {
+            if (_working) 
+                return;
+
+            _working = true;
+            
+            while (_waitOperations.Count > 0)
+            {
+                var (type, key, param) = _waitOperations.Dequeue();
+                switch (type)
+                {
+                    // BroadcastMessage
+                    case 0:
+                        if (_listeners.ContainsKey(key))
+                        {
+                            foreach (var action in _listeners[key])
+                            {
+                                action?.Invoke(param);
+                            }
+                        }
+
+                        break;
+                    
+                    // BroadcastStorageMessage
+                    case 1:
+                        if (_listeners.ContainsKey(key))
+                        {
+                            foreach (var action in _listeners[key])
+                            {
+                                action?.Invoke(param);
+                            }
+                        }
+                        else
+                        {
+                            if (!_storeMessages.ContainsKey(key))
+                            {
+                                _storeMessages[key] = new HashSet<object[]>();
+                            }
+
+                            _storeMessages[key].Add(param);
+                        }
+
+                        break;
+                    
+                    // AddListener
+                    case 2:
+                        if (!_listeners.ContainsKey(key))
+                        {
+                            _listeners[key] = new HashSet<Action<object[]>>();
+                        }
+
+                        var callback = (Action<object[]>) param[0];
+                        _listeners[key].Add(callback);
+                        
+                        if (_storeMessages.ContainsKey(key))
+                        {
+                            var array = _storeMessages[key];
+                            _storeMessages.Remove(key);
+                            foreach (var objects in array)
+                            {
+                                callback?.Invoke(objects);
+                            }
+                        }
+
+                        break;
+                    
+                    // RemoveListener
+                    case 3:
+                        if (!_listeners.ContainsKey(key))
+                        {
+                            $"Remove listener failed. Can't find listener key : {key}".Exception();
+                            break;
+                        }
+
+                        callback = (Action<object[]>) param[0];
+                        if (_listeners[key].Remove(callback))
+                        {
+                            if (_listeners[key].Count == 0)
+                            {
+                                _listeners.Remove(key);
+                            }
+                        }
+                        else
+                        {
+                            $"Remove listener failed. Can't find listener callback. key : {key}".Exception();
+                        }
+
+                        break;
+                    
+                    default:
+                        $"Listener type error. Type : {type}".Exception();
+                        break;
+                }
+            }
+
+            _working = false;
         }
     }
 }
