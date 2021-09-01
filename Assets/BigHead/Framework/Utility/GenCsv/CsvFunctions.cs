@@ -24,6 +24,18 @@ public static class CsvFunctions
         return value as T;
     }
 
-    public static void RegisterCsv(string key, BasicCsv basicCsv) => 
+    public static void RegisterCsv(string key, BasicCsv basicCsv)
+    {
+        bool isPlus = false;
+        if (key.EndsWith("Plus"))
+        {
+            key = key.Substring(0, key.Length - 4);
+            isPlus = true;
+        }
+
+        if (_csvBasics.ContainsKey(key) && !isPlus)
+            return;
+        
         _csvBasics[key] = basicCsv;
+    }
 }
