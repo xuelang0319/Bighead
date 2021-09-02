@@ -8,6 +8,7 @@
 
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using BigHead.Framework.Core;
 using BigHead.Framework.Utility.Helper;
@@ -20,17 +21,36 @@ public static partial class CsvAssistant
     public static void Step(Action callback)
     {
         var array = typeof(BasicCsv).CreateAllDerivedClass<BasicCsv>().ToList();
-        var waitCount = array.Count;
-        if (waitCount == 0)
+        if (array.Count == 0)
         {
             "没有检测到任何Csv配置表，请检查。".Exception();
             callback?.Invoke();
         }
 
-        foreach (var csv in array)
+        var plusArray = array.Where(csv => csv.GetType().Name.EndsWith("Plus")).ToArray();
+        var dictionary = new Dictionary<string, BasicCsv>();
+        for (int i = 0; i < plusArray.Length; i++)
         {
-            CsvFunctions.RegisterCsv(csv.GetType().Name, csv);
-            csv.InitCsv(() =>
+            var item = plusArray[i];
+            var name = item.GetType().Name;
+            name = name.Substring(0, name.Length - 4);
+            dictionary.Add(name, item);
+            array.Remove(item);
+        }
+
+        for (var i = 0; i < array.Count; i++)
+        {
+            var item = array[i];
+            var name = item.GetType().Name;
+            if (dictionary.ContainsKey(name)) continue;
+            dictionary.Add(name, item);
+        }
+        
+        var waitCount = dictionary.Count;
+        foreach (var kv in dictionary)
+        {
+            CsvFunctions.RegisterCsv(kv.Key, kv.Value);
+            kv.Value.InitCsv(() =>
             {
                 --waitCount;
                 if(Equals(waitCount, 0)) 

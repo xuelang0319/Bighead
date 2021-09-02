@@ -26,14 +26,7 @@ public static class CsvFunctions
 
     public static void RegisterCsv(string key, BasicCsv basicCsv)
     {
-        bool isPlus = false;
-        if (key.EndsWith("Plus"))
-        {
-            key = key.Substring(0, key.Length - 4);
-            isPlus = true;
-        }
-
-        if (_csvBasics.ContainsKey(key) && !isPlus)
+        if (_csvBasics.ContainsKey(key))
             return;
         
         _csvBasics[key] = basicCsv;
