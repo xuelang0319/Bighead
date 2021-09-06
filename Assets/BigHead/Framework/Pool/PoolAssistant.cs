@@ -110,17 +110,36 @@ namespace BigHead.Framework.Pool
                 (item =>
             {
                 if (item is GameObject gameObject)
+                {
                     gameObject.transform.SetParent(Parent);
+                    gameObject.SetActive(false);
+                }
                 
-                else if(item is Component com)
+                else if (item is Component com)
+                {
                     com.transform.SetParent(Parent);
+                    com.gameObject.SetActive(false);
+                }
                 
                 recycleFoo?.Invoke(item);
             }), 
                 clearFoo);
         }
 
-        public T Get() => _pool.Get();
+        public T Get()
+        {
+            var element = _pool.Get();
+            if (element is GameObject gameObject)
+            {
+                gameObject.SetActive(true);
+            }
+            else if (element is Component com)
+            {
+                com.gameObject.SetActive(true);
+            }
+
+            return element;
+        }
         
         public void Recycle(T item) => _pool.Recycle(item);
 
