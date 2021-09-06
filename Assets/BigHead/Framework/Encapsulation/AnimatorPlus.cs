@@ -9,37 +9,47 @@
 using System;
 using System.Collections.Generic;
 using BigHead.Framework.Core;
-using UnityEditor.Animations;
 using UnityEngine;
 
 namespace BigHead.Framework.Encapsulation
 {
     public class AnimatorPlus : Animator
     {
-        /// <summary> 动作当前时间 </summary>
-        private Dictionary<string, float> _actionTimes = new Dictionary<string, float>();
-        /// <summary> 动作原始时间 </summary>
-        private Dictionary<string, float> _originTimes = new Dictionary<string, float>();
-        /// <summary> 初始化状态 </summary>
-        private bool _hasInit = false;
+        /// <summary>
+        /// 动画片段信息
+        /// </summary>
+        class AnimationClipSpeedInfo
+        {
+            /// <summary> 速度参数名称 </summary>
+            public string SpeedParamName;
+            /// <summary> 动画原生时长 </summary>
+            public float AnimationLength;
+            /// <summary> 当前设置时长 </summary>
+            public float CurrentLength;
+        }
+        
+        /// <summary> 速度信息字典 </summary>
+        private Dictionary<string, AnimationClipSpeedInfo> _speedInfos = 
+            new Dictionary<string, AnimationClipSpeedInfo>();
 
         /// <summary>
-        /// 初始化方法
+        /// 初始化方法, 字典中对应每个状态机的名称和对应控制的名称
         /// </summary>
-        private void Step()
+        /// <param name="data">参数， Key - StateName, Value - ParameterName</param>
+        public void Init(Dictionary<string, string> data)
         {
-            if (_hasInit)
-                return;
-
-            _hasInit = true;
+            foreach (var kv in data)
+            {
+                _speedInfos.Add(kv.Key, new AnimationClipSpeedInfo{SpeedParamName = kv.Value});
+            }
+            
             ForeachClip(clip =>
             {
-                // 融合动作可能会添加两次，这里做排除
-                if (_originTimes.ContainsKey(clip.name))
+                if (!_speedInfos.ContainsKey(clip.name))
                     return;
 
-                _originTimes.Add(clip.name, clip.length);
-                _actionTimes.Add(clip.name, clip.length);
+                var info = _speedInfos[clip.name];
+                info.AnimationLength = info.CurrentLength = clip.length;
             });
         }
     
@@ -58,25 +68,6 @@ namespace BigHead.Framework.Encapsulation
         }
 
         /// <summary>
-        /// 遍历Animator中的AnimatorState
-        /// </summary>
-        /// <param name="callback">逐个回调</param>
-        private void ForeachState(Action<AnimatorState> callback)
-        {
-            var layers = ((AnimatorController) runtimeAnimatorController).layers;
-            var length = layers.Length;
-            for (int i = 0; i < length; i++)
-            {
-                var childStates = layers[i].stateMachine.states;
-                length = childStates.Length;
-                for (int j = 0; j < length; j++)
-                {
-                    callback?.Invoke(childStates[j].state);
-                }
-            }
-        }
-
-        /// <summary>
         /// 强制比对更新时间。
         /// 如果与当前时间相同则不改变。
         /// 如果不同则用原始时间计算播放速度比例。
@@ -85,24 +76,19 @@ namespace BigHead.Framework.Encapsulation
         /// <param name="realTime">真实播放时间</param>
         private void ForceUpdateStateSpeed(string stateName, float realTime)
         {
-            Step();
-            if (!_actionTimes.ContainsKey(stateName))
+            if (!_speedInfos.ContainsKey(stateName))
             {
-                $"Play animator failed. {name} can not find state name - {stateName}.".Exception();
+                $"AnimatorPlus don't have key : {stateName}, please register first".Warning();
                 return;
             }
 
-            if (Mathf.Abs(_actionTimes[stateName] - realTime) < 0.01f)
+            var info = _speedInfos[stateName];
+            if (Mathf.Abs(info.CurrentLength - realTime) < 0.001f)
                 return;
-        
-            ForeachState( clip =>
-            {
-                if (clip.name != stateName)
-                    return;
 
-                clip.speed = _originTimes[stateName] / realTime;
-                _actionTimes[stateName] = realTime;
-            });
+            var currentSpeed = info.AnimationLength / realTime;
+            info.CurrentLength = realTime;
+            SetFloat(info.SpeedParamName.Trim(), info.AnimationLength * currentSpeed);
         }
 
         /// <summary>
@@ -113,12 +99,6 @@ namespace BigHead.Framework.Encapsulation
         /// <param name="realTime">真实播放时间</param>
         public void Play(int layer, string stateName, float realTime)
         {
-            if (!_actionTimes.ContainsKey(stateName))
-            {
-                $"Play animator failed. {name} can not find state name - {stateName}.".Exception();
-                return;
-            }
-
             ForceUpdateStateSpeed(stateName, realTime);
             Play(stateName, layer);
         }
