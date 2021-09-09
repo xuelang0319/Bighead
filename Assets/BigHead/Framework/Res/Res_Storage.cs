@@ -63,7 +63,7 @@ public partial class Res
     public object Get(string key)
     {
         _preloads.TryGetValue(key, out var asset);
-        return asset;
+        return asset?.Value;
     }
 
     /// <summary>
