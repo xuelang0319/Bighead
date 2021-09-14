@@ -100,7 +100,7 @@ namespace BigHead.Framework.Encapsulation
         public void Play(int layer, string stateName, float realTime)
         {
             ForceUpdateStateSpeed(stateName, realTime);
-            Play(stateName, layer);
+            Play(stateName, layer, 0);
         }
     }
 }
