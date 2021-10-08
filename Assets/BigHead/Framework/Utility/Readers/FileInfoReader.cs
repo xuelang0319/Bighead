@@ -32,5 +32,25 @@ namespace BigHead.Framework.Utility.Readers
                 return string.Empty;
             }
         }
+        
+        public static string ReadFile(string path)
+        {
+            try
+            {
+                using (var fileStream = File.Open(path, FileMode.Open, FileAccess.Read,
+                    FileShare.ReadWrite))
+                {
+                    byte[] buffer = new byte[fileStream.Length];
+                    fileStream.Read(buffer, 0, buffer.Length);
+                    fileStream.Seek(0, SeekOrigin.Begin);
+                    return Encoding.UTF8.GetString(buffer);
+                }
+            }
+            catch (Exception e)
+            {
+                e.Highlight();
+                return String.Empty;
+            }
+        }
     }
 }
