@@ -17,6 +17,7 @@ using BigHead.Framework.Core;
 using BigHead.Framework.Extension;
 using BigHead.Framework.Utility.Crypto;
 using BigHead.Framework.Utility.Helper;
+using BigHead.Framework.Utility.Readers;
 using Excel;
 using UnityEditor;
 using static BigheadConfig;
@@ -96,7 +97,7 @@ namespace BigHead.Editor.Generate.GenCsv
             {
                 foreach (var constPath in constPaths)
                 {
-                    var content = new FileInfo(constPath).ReadFile();
+                    var content = FileInfoReader.ReadFile(constPath);
                     var md5 = BigHeadCrypto.MD5Encode(content);
                     var fileNameWithExtension = Path.GetFileName(constPath);
                     newDatas.Add(fileNameWithExtension, md5);
@@ -131,7 +132,7 @@ namespace BigHead.Editor.Generate.GenCsv
             // 对每个Excel做MD5变更校验
             foreach (var path in paths)
             {
-                var content = new FileInfo(path).ReadFile();
+                var content = FileInfoReader.ReadFile(path);
                 var md5 = BigHeadCrypto.MD5Encode(content);
 
                 var fileNameWithExtension = Path.GetFileName(path);
@@ -176,7 +177,7 @@ namespace BigHead.Editor.Generate.GenCsv
             foreach (var path in changedFilter)
             {
                 var excelName = Path.GetFileNameWithoutExtension(path);
-                using(var stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using(var stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     using(var excelReader = path.EndsWith(".xls")
                         ? ExcelReaderFactory.CreateBinaryReader(stream)
