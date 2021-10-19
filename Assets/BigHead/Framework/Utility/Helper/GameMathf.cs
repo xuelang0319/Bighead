@@ -14,6 +14,36 @@ namespace BigHead.Framework.Utility.Helper
     public static class GameMathf
     {
         /// <summary>
+        /// 使用角度和半径获取相对于原点的坐标位置.
+        /// 仅限于3D同水平计算.
+        /// </summary>
+        /// <param name="angle">角度</param>
+        /// <param name="radius">半径</param>
+        /// <returns>返回相对于原点的坐标</returns>
+        public static Vector3 GetLocalPositionByAngleAndRadius_3D(float angle, float radius)
+        {
+            const float param = 3.14f / 180;
+            var x = radius * Mathf.Cos (angle * param);
+            var z = radius * Mathf.Sin (angle * param);
+            return new Vector3(x, 0, z);
+        }
+        
+        /// <summary>
+        /// 使用角度和半径获取相对于原点的坐标位置.
+        /// 仅限于2D平面计算.
+        /// </summary>
+        /// <param name="angle">角度</param>
+        /// <param name="radius">半径</param>
+        /// <returns>返回相对于原点的坐标</returns>
+        public static Vector2 GetLocalPositionByAngleAndRadius_2D(float angle, float radius)
+        {
+            const float param = 3.14f / 180;
+            var x = radius * Mathf.Cos (angle * param);
+            var y = radius * Mathf.Sin (angle * param);
+            return new Vector2(x, y);
+        }
+
+        /// <summary>
         /// 获取角度，使用X,Z计算
         /// </summary>
         /// <param name="origin">原点坐标</param>
@@ -88,7 +118,6 @@ namespace BigHead.Framework.Utility.Helper
 
             if (range360 && angle < 0) angle += 360;
             return angle;
-        
         }
     }
 }
