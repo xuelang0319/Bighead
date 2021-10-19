@@ -7,16 +7,43 @@
 //
 
 using System;
+using UnityEngine;
 
 namespace BigHead
 {
     public class BigHeadManager : MonoGlobalSingleton<BigHeadManager>
     {
-        public event Action DestroyEvent;
+        /// <summary>
+        /// 帧调用间隔时间
+        /// </summary>
+        private float UpdateIntervalTime;
+        
+        /// <summary>
+        /// 帧调用事件
+        /// </summary>
+        public Action<float> UpdateEvent;
+        
+        /// <summary>
+        /// 销毁事件
+        /// </summary>
+        public Action DestroyEvent;
+
+        private void Awake()
+        {
+            UpdateIntervalTime = Time.realtimeSinceStartup;
+        }
 
         private void OnDestroy()
         {
             DestroyEvent?.Invoke();
+        }
+        
+        private void Update()
+        {
+            var now = Time.realtimeSinceStartup;
+            var intervalTime = now - UpdateIntervalTime;
+            UpdateIntervalTime = now;
+            UpdateEvent?.Invoke(intervalTime);
         }
     }
 }
