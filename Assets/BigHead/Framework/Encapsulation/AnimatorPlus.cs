@@ -32,6 +32,9 @@ namespace BigHead.Framework.Encapsulation
         private Dictionary<string, AnimationClipSpeedInfo> _speedInfos = 
             new Dictionary<string, AnimationClipSpeedInfo>();
 
+        /// <summary> 相同名字的速度参数 </summary>
+        private bool _sameSpeedParam = true;
+
         /// <summary>
         /// 初始化方法, 字典中对应每个状态机的名称和对应控制的名称
         /// </summary>
@@ -78,8 +81,15 @@ namespace BigHead.Framework.Encapsulation
         {
             if (!_speedInfos.ContainsKey(stateName))
             {
-                $"AnimatorPlus don't have key : {stateName}, please register first".Warning();
-                return;
+                if (_sameSpeedParam)
+                {
+                    _speedInfos.Add(stateName, new AnimationClipSpeedInfo {SpeedParamName = stateName});
+                }
+                else
+                {
+                    $"AnimatorPlus don't have key : {stateName}, please register first".Warning();
+                    return;
+                }
             }
 
             var info = _speedInfos[stateName];
@@ -88,7 +98,7 @@ namespace BigHead.Framework.Encapsulation
 
             var currentSpeed = info.AnimationLength / realTime;
             info.CurrentLength = realTime;
-            SetFloat(info.SpeedParamName.Trim(), info.AnimationLength * currentSpeed);
+            SetFloat(info.SpeedParamName.Trim(), currentSpeed);
         }
 
         /// <summary>
