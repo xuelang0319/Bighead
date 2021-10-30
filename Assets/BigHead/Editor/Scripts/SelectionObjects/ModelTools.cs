@@ -10,7 +10,7 @@ using BigHead.Framework.Core;
 using UnityEditor;
 using UnityEngine;
 
-namespace BigHead.Editor.ArtTools
+namespace BigHead.Editor.Scripts
 {
     public static class ModelTools
     {

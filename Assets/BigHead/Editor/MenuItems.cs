@@ -6,9 +6,9 @@
 //  Eric    |  2020年12月18日  |   编辑器菜单扩展项
 //
 
-using BigHead.Editor.ArtTools;
 using BigHead.Editor.Generate.GenCsv;
 using BigHead.Editor.Generate.GenTmx;
+using BigHead.Editor.Scripts;
 using UnityEditor;
 using UnityEngine;
 
