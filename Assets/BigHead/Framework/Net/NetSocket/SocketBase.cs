@@ -17,7 +17,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using BigHead.Framework.Core;
-using BigHead.Framework.Extension;
 using BigHead.Framework.Net.NetSocket.Args;
 using BigHead.Framework.Net.NetSocket.Enums;
 using BigHead.Framework.Net.NetSocket.Handlers;
