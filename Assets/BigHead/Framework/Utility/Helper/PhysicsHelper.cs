@@ -42,12 +42,18 @@ namespace BigHead.Framework.Utility.Helper
                 if (hits == null) hits = new List<RaycastHit>();
                 hits.Add(hit);
                 
-                var normal = hit.normal;
                 var point = hit.point;
                 point.y = y;
                 
-                // 碰撞后胶囊体停止的位置
-                var stopPosition = point + normal * capsuleRadius;
+                // 碰撞后圆心的回退距离
+                const float missDistance = 0.005f; 
+            
+                // 碰撞点计算圆心所在位置
+                var normal = hit.normal; 
+                var centerPosition = point + normal * capsuleRadius; 
+                
+                // 回退后最终停止位置
+                var stopPosition = centerPosition - direction * missDistance;
 
                 // 如果仅计算停止位置，则直接返回该碰撞后的物体位置。
                 if (hitStop) return stopPosition;
