@@ -6,6 +6,7 @@
 //  Eric    |  2021年12月02日  |   Task延时调用
 //
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,6 +16,8 @@ namespace BigHead.Framework.Game.Tasks
     {
         /// <summary> 组名 - 任务组 </summary>
         private readonly Dictionary<string, HashSet<TaskBase>> _groupName2Tasks = new Dictionary<string, HashSet<TaskBase>>();
+        /// <summary> 回调集 </summary>
+        private readonly Dictionary<TaskBase, Action> _callbacks = new Dictionary<TaskBase, Action>();
         /// <summary> 任务 - 组名 </summary>
         private readonly Dictionary<TaskBase, string> _task2GroupName = new Dictionary<TaskBase, string>();
         /// <summary> 运行中的任务 </summary>
@@ -29,7 +32,8 @@ namespace BigHead.Framework.Game.Tasks
         /// </summary>
         /// <param name="groupName">组名</param>
         /// <param name="task">任务</param>
-        public void Add(string groupName, TaskBase task)
+        /// <param name="callback">回调方法</param>
+        public void Add(string groupName, TaskBase task, Action callback = null)
         {
             if (!_groupName2Tasks.ContainsKey(groupName))
                 _groupName2Tasks[groupName] = new HashSet<TaskBase>();
@@ -37,6 +41,7 @@ namespace BigHead.Framework.Game.Tasks
             _groupName2Tasks[groupName].Add(task);
             _task2GroupName[task] = groupName;
             _waitAddQueue.Enqueue(task);
+            if(callback != null) _callbacks.Add(task, callback);
         }
 
         /// <summary>
@@ -52,6 +57,7 @@ namespace BigHead.Framework.Game.Tasks
             
             var group = _groupName2Tasks[groupName];
             group.Remove(task);
+            _callbacks.Remove(task);
 
             if (group.Count > 0) return;
             _groupName2Tasks.Remove(groupName);
@@ -72,7 +78,12 @@ namespace BigHead.Framework.Game.Tasks
             for (int i = 0; i < _runningTask.Count; i++)
             {
                 var state = _runningTask[i].Update(Time.deltaTime);
-                if (state == TaskState.Success) Remove(_runningTask[i]);
+                if (state == TaskState.Success)
+                {
+                    Remove(_runningTask[i]);
+                    _callbacks.TryGetValue(_runningTask[i], out var callback);
+                    callback?.Invoke();
+                }
             }
         }
     }
