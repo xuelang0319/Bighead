@@ -23,5 +23,17 @@ namespace BigHead.Framework.Extension
             var temporary = Mathf.Pow(10, keepCount);
             return (int) (value * temporary) / temporary;
         }
+
+        /// <summary>
+        /// 获得同一水平随机位置
+        /// </summary>
+        /// <param name="v3">当前位置</param>
+        /// <param name="radius">随机半径</param>
+        /// <returns>当前位置为原点半径内随机坐标</returns>
+        public static Vector3 GetHorizontalRandomPos(this Vector3 v3, float radius)
+        {
+            var randomPos = Random.insideUnitCircle * radius;
+            return new Vector3(v3.x + randomPos.x, v3.y, v3.z + randomPos.y);
+        }
     }
 }
