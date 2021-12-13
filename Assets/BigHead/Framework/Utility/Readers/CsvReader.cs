@@ -62,7 +62,7 @@ namespace BigHead.Framework.Utility.Readers
         public static List<string> ToListWithDeleteFirstLines(string str, int deleteLineCount = 0)
         {
             var tempStrs = str.Split('\n');
-            if (tempStrs.Length <= deleteLineCount)
+            if (tempStrs.Length < deleteLineCount)
             {
                 $"操作失败，数据行数不足 {deleteLineCount} 行，请检查。 传入字符串： {str}".Error();
                 return null;
