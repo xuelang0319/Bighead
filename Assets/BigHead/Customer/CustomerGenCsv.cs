@@ -118,7 +118,7 @@ namespace BigHead.Customer
                 case "[FLOAT]":
                 case "[Float]":
                 case ":Array:float":
-                case ":Array:FLO":
+                case ":Array:Float":
                 case "float[]":
                     return "float[]";
                 default:
