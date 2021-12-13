@@ -67,6 +67,14 @@ public static class BigheadConfig
     /// <summary> 相对于TmxPath, TxtPath需要填写的新路径 </summary>
     public static readonly string TmxNewReplace = "TxtData";
     
+    /* ------------------
+     * Curve.csv part.
+     * ------------------*/
+    /// <summary> 曲线Csv配置文件名称 </summary>
+    public static readonly string CurveCsvName = "Curve.csv";
+    
+    /// <summary> 曲线Csv配置文件路径 </summary>
+    public static readonly string CurveCsvPath = ConstCsvPath + "/" + CurveCsvName;
 
     /* ------------------
      * App part

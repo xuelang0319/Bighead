@@ -7,10 +7,10 @@
 //
 
 using BigHead.Editor.Generate.GenCsv;
+using BigHead.Editor.Generate.GenCurve;
 using BigHead.Editor.Generate.GenTmx;
 using BigHead.Editor.Scripts;
 using UnityEditor;
-using UnityEngine;
 
 namespace BigHead.Editor
 {
@@ -50,10 +50,16 @@ namespace BigHead.Editor
             Tmx2Txt.ClearAll();
         }
 
-        [MenuItem("BigHead/ArtTools/GetSelectionVertexes")]
+        [MenuItem("GameObject/BigHead/GetSelectionVertexes", false, 0)]
         public static void GetNumberOfVertexes()
         {
             ModelTools.GetSelectionModelVertexesAndTriangularFacet();
+        }
+
+        [MenuItem("BigHead/Window/CurveEditor")]
+        public static void OpenCurveWindow()
+        {
+            CurveWindow.OpenWindow();
         }
     }
 }
