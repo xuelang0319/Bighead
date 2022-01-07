@@ -97,7 +97,7 @@ namespace BigHead.Editor.Generate.GenCsv
             {
                 foreach (var constPath in constPaths)
                 {
-                    var content = FileInfoReader.ReadFile(constPath);
+                    var content = FileHelper.ShareReadFile(constPath);
                     var md5 = BigHeadCrypto.MD5Encode(content);
                     var fileNameWithExtension = Path.GetFileName(constPath);
                     newDatas.Add(fileNameWithExtension, md5);
@@ -132,7 +132,7 @@ namespace BigHead.Editor.Generate.GenCsv
             // 对每个Excel做MD5变更校验
             foreach (var path in paths)
             {
-                var content = FileInfoReader.ReadFile(path);
+                var content = FileHelper.ShareReadFile(path);
                 var md5 = BigHeadCrypto.MD5Encode(content);
 
                 var fileNameWithExtension = Path.GetFileName(path);

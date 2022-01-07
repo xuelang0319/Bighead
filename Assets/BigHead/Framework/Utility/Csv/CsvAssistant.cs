@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using System.Linq;
 using BigHead.Framework.Core;
 using BigHead.Framework.Utility.Helper;
-using UnityEngine;
 
 public static partial class CsvAssistant
 {

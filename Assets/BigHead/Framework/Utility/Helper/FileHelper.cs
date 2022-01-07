@@ -18,6 +18,31 @@ namespace BigHead.Framework.Utility.Helper
     public static class FileHelper
     {
         /// <summary>
+        /// 共享打开文件，防止文件被其它进程优先打开后读取报错。
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <returns>内容</returns>
+        public static string ShareReadFile(string path)
+        {
+            try
+            {
+                using (var fileStream = File.Open(path, FileMode.Open, FileAccess.Read,
+                    FileShare.ReadWrite))
+                {
+                    byte[] buffer = new byte[fileStream.Length];
+                    fileStream.Read(buffer, 0, buffer.Length);
+                    fileStream.Seek(0, SeekOrigin.Begin);
+                    return Encoding.UTF8.GetString(buffer);
+                }
+            }
+            catch (Exception e)
+            {
+                e.Highlight();
+                return String.Empty;
+            }
+        }
+        
+        /// <summary>
         /// 通过路径获取文件所有信息并按行存储为列表
         /// </summary>
         public static List<string> ReadFile(string path)
