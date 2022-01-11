@@ -115,7 +115,7 @@ namespace BigHead.Editor.Generate.GenBasic
                 if (i < Properties.Count - 1) detailBuilder.Append(CharNewLine);
             }
 
-            if (Foos.Count > 0) detailBuilder.AppendLine().Append(CharNewLine);
+            if (Properties.Count > 0 && Foos.Count > 0) detailBuilder.AppendLine().Append(CharNewLine);
 
             for (int i = 0; i < Foos.Count; i++)
             {
