@@ -1,0 +1,4 @@
+ID,Name,Frames
+:Int,:Str,:Array:Float
+编号,描述,帧数据
+100002,Parabola,0、0、0、2|0.5、1、0、0|1、0、-2、-3.95

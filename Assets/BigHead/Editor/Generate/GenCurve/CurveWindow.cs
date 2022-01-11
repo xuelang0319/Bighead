@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using BigHead.Editor.Generate.GenBasic;
 using BigHead.Editor.Toolbar;
 using BigHead.Framework.Extension;
 using BigHead.Framework.Utility.Helper;
@@ -63,12 +64,23 @@ namespace BigHead.Editor.Generate.GenCurve
         private static void CreateNew()
         {
             var id = ((CurveParams.Count > 0 ? CurveParams.Keys.Select(int.Parse).Max() : 100001) + 1).ToString();
-            var curveParam = new CurveParam(id, "New Curve");
+            var curveParam = new CurveParam(id, $"Curve_{id}");
             CurveParams.Add(id, curveParam);
         }
 
         /// <summary>
-        /// 保存所有曲线
+        /// 保存文件
+        /// </summary>
+        private static void Save()
+        {
+            SaveCsvData();
+            GenerateCurveScript();
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
+        /// <summary>
+        /// 保存CSV格式曲线数据
         /// </summary>
         private static void SaveCsvData()
         {
@@ -81,7 +93,33 @@ namespace BigHead.Editor.Generate.GenCurve
             }
             
             FileHelper.CreateFile(BigheadConfig.ConstCsvPath, stringBuilder.ToString(), BigheadConfig.CurveCsvName);
-            AssetDatabase.SaveAssets();
+        }
+
+        /// <summary>
+        /// 生成曲线对应脚本
+        /// </summary>
+        private static void GenerateCurveScript()
+        {
+            var genClass = new GenClass(0, "CurveAssistant");
+            genClass.IsPartial = true;
+            genClass.Modifier = GenBasic.GenBasic.modifier.Public_Static;
+
+            foreach (var curveParam in CurveParams.Values)
+            {
+                if(curveParam.Removed) continue;
+                var foo = genClass.AddFoo($"Get{curveParam.Name}Value", "float");
+                foo.Modifier = GenBasic.GenBasic.modifier.Public_Static;
+                foo
+                    .AddParam("float", "percent")
+                    .AddDetail($"return GetCurveValue({curveParam.Id}, percent);");
+            }
+            
+            FileHelper.CreateFile(
+                BigheadConfig.GenerateCurveScriptPath, 
+                genClass.StartGenerate().ToString(),
+                BigheadConfig.GenerateCurveScriptName);
+            
+            EditorUtility.ClearProgressBar();
             AssetDatabase.Refresh();
         }
 
@@ -103,11 +141,11 @@ namespace BigHead.Editor.Generate.GenCurve
             GUILayout.Space(10f);
             if (GUILayout.Button("Save", GUILayout.Width(120)))
             {
-                SaveCsvData();
+                Save();
             }
 
             GUILayout.Space(200f);
-            if (GUILayout.Button("Clear", GUILayout.Width(120)))
+            if (GUILayout.Button("Reload", GUILayout.Width(120)))
             {
                 LoadCsvData();
             }
@@ -117,11 +155,18 @@ namespace BigHead.Editor.Generate.GenCurve
 
             foreach (var param in CurveParams.Values)
             {
+                if(param.Removed) continue;
                 EditorGUILayout.BeginHorizontal();
                 GUILayout.Label("Id: " + param.Id, GUILayout.Width(100));
                 GUILayout.Space(10);
-                GUILayout.Label("Desc: ", GUILayout.Width(50));
-                param.Desc = EditorGUILayout.TextField(param.Desc, GUILayout.Width(200));
+                GUILayout.Label("Name: ", GUILayout.Width(50));
+                GUILayout.Space(10);
+                param.Name = EditorGUILayout.TextField(param.Name, GUILayout.Width(200));
+                GUILayout.Space(70);
+                if (GUILayout.Button("Delete", GUILayout.Width(120)))
+                {
+                    param.Removed = true;
+                }
                 EditorGUILayout.EndHorizontal();
                 EditorGUILayout.CurveField(param.AnimationCurve, GUILayout.Width(580));
                 GUILayout.Space(10);
@@ -139,7 +184,7 @@ namespace BigHead.Editor.Generate.GenCurve
         {
             var builder = new StringBuilder();
             builder
-                .Append("ID,Desc,Frames").AppendLine()
+                .Append("ID,Name,Frames").AppendLine()
                 .Append(":Int,:Str,:Array:Float").AppendLine()
                 .Append("编号,描述,帧数据");
             return builder.ToString();
@@ -158,7 +203,12 @@ namespace BigHead.Editor.Generate.GenCurve
             /// <summary>
             /// 曲线描述
             /// </summary>
-            public string Desc;
+            public string Name;
+
+            /// <summary>
+            /// 已经移除
+            /// </summary>
+            public bool Removed;
             
             /// <summary>
             /// 当前曲线句柄
@@ -169,11 +219,11 @@ namespace BigHead.Editor.Generate.GenCurve
             /// 构造方法 - 用于新建
             /// </summary>
             /// <param name="id">曲线ID</param>
-            /// <param name="desc">曲线描述</param>
-            public CurveParam(string id, string desc)
+            /// <param name="name">曲线描述</param>
+            public CurveParam(string id, string name)
             {
                 Id = id;
-                Desc = desc;
+                Name = name;
                 AnimationCurve = new AnimationCurve();
             }
             
@@ -185,7 +235,7 @@ namespace BigHead.Editor.Generate.GenCurve
             {
                 var strs = line.Split(',');
                 Id = strs[0];
-                Desc = strs[1];
+                Name = strs[1];
                 AnimationCurve = new AnimationCurve();
                 
                 if (string.IsNullOrWhiteSpace(strs[2])) return;
@@ -216,7 +266,8 @@ namespace BigHead.Editor.Generate.GenCurve
                 var stringBuilder = new StringBuilder();
                 var commaSymbol = ',';
                 var middleCharacter = '|';
-                stringBuilder.Append(Id).Append(commaSymbol).Append(Desc).Append(commaSymbol);
+                var name = string.IsNullOrEmpty(Name) || string.IsNullOrWhiteSpace(Name) ? $"Curve_{Id}" : Name;
+                stringBuilder.Append(Id).Append(commaSymbol).Append(name).Append(commaSymbol);
                 var keys = AnimationCurve.keys;
                 for (int i = 0; i < keys.Length; i++)
                 {

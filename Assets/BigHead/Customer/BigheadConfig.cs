@@ -75,6 +75,11 @@ public static class BigheadConfig
     
     /// <summary> 曲线Csv配置文件路径 </summary>
     public static readonly string CurveCsvPath = ConstCsvPath + "/" + CurveCsvName;
+    
+    /// <summary> 自动生成曲线脚本路径 </summary>
+    public static readonly string GenerateCurveScriptPath = Application.dataPath + "/Scripts/GenerateCs/Curve/";
+
+    public static readonly string GenerateCurveScriptName = "CurveAssistant.cs";
 
     /* ------------------
      * App part
