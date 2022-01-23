@@ -123,7 +123,9 @@ namespace BigHead.Editor.Generate.GenCsv
 
             // 获取Excel文件夹下所有文件路径
             var files = Directory.GetFiles(ExcelPath, "*", SearchOption.AllDirectories);
-            var paths = files.Where(name => name.EndsWith(".xlsx") || name.EndsWith(".xls"))
+            var paths = files
+                .Where(name => name.EndsWith(".xlsx") || name.EndsWith(".xls"))
+                .Where(name=> !name.Contains("~$"))
                 .Select(name => name.Replace('/', '\\')).ToArray();
             
             // 发生变化的列表
