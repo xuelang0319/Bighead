@@ -14,3 +14,6 @@ Ha~
 
 Author: Eric
 Email:  110925095@qq.com
+
+Referencing declaration:
+Toolbar - https://github.com/marijnz/unity-toolbar-extender
