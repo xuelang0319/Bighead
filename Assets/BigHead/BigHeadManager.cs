@@ -9,41 +9,58 @@
 using System;
 using UnityEngine;
 
-namespace BigHead
+public class BigHeadManager : MonoGlobalSingleton<BigHeadManager>
 {
-    public class BigHeadManager : MonoGlobalSingleton<BigHeadManager>
+    /// <summary>
+    /// 预处理帧事件
+    /// </summary>
+    public Action<float> PreUpdateEvent;
+
+    /// <summary>
+    /// 帧调用事件
+    /// </summary>
+    public Action<float> UpdateEvent;
+
+    /// <summary>
+    /// 后处理帧调用事件
+    /// </summary>
+    public Action<float> LateUpdateEvent;
+
+    /// <summary>
+    /// 无视时间缩放帧调用事件，不可与帧调用事件同时注册
+    /// </summary>
+    public Action<float> IgnoreTimescaleUpdateEvent;
+
+    /// <summary>
+    /// 固定帧率调用事件，该事件流不与其他帧事件相关联
+    /// </summary>
+    public Action<float> FixedUpdateEvent;
+    
+    /// <summary>
+    /// 销毁事件
+    /// </summary>
+    public Action DestroyEvent;
+
+    private void OnDestroy()
     {
-        /// <summary>
-        /// 帧调用间隔时间
-        /// </summary>
-        private float UpdateIntervalTime;
-        
-        /// <summary>
-        /// 帧调用事件
-        /// </summary>
-        public Action<float> UpdateEvent;
-        
-        /// <summary>
-        /// 销毁事件
-        /// </summary>
-        public Action DestroyEvent;
+        DestroyEvent?.Invoke();
+    }
 
-        private void Awake()
-        {
-            UpdateIntervalTime = Time.realtimeSinceStartup;
-        }
+    private void Update()
+    {
+        var deltaTime = Time.deltaTime;
+        PreUpdateEvent?.Invoke(deltaTime);
+        UpdateEvent?.Invoke(deltaTime);
+        IgnoreTimescaleUpdateEvent?.Invoke(Time.fixedUnscaledDeltaTime);
+    }
 
-        private void OnDestroy()
-        {
-            DestroyEvent?.Invoke();
-        }
-        
-        private void Update()
-        {
-            var now = Time.realtimeSinceStartup;
-            var intervalTime = now - UpdateIntervalTime;
-            UpdateIntervalTime = now;
-            UpdateEvent?.Invoke(intervalTime);
-        }
+    private void LateUpdate()
+    {
+        LateUpdateEvent?.Invoke(Time.deltaTime);
+    }
+
+    private void FixedUpdate()
+    {
+        FixedUpdateEvent?.Invoke(Time.fixedDeltaTime);
     }
 }

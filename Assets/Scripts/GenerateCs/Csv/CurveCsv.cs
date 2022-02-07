@@ -1,4 +1,4 @@
-using static BigHead.Customer.CustomerGenCsv;
+using static BigHead.Csv.Core.CsvGenerateType;
 using UnityEngine;
 using System.Collections.Generic;
 using System;
