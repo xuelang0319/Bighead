@@ -128,10 +128,13 @@ namespace BigHead.Csv.Core.Editor
             // 对每个Excel做MD5变更校验
             foreach (var path in paths)
             {
+                var fileNameWithExtension = Path.GetFileName(path);
+                if(fileNameWithExtension.StartsWith("#"))
+                    continue;
+
                 var content = FileHelper.ShareReadFile(path);
                 var md5 = BigheadCrypto.MD5Encode(content);
 
-                var fileNameWithExtension = Path.GetFileName(path);
                 // 添加正确数据，直接修正，但对发生了变化或新增的文件进行记录
                 newData.Add(fileNameWithExtension, md5);
 
