@@ -140,7 +140,7 @@ namespace BigHead.Csv.Core.Editor
                     key += $"item[{list[i]}]";
                     if (i < list.Count - 1)
                     {
-                        key += " + ";
+                        key += " + \"&&\" + ";
                     }
                 }
             }
@@ -181,6 +181,14 @@ namespace BigHead.Csv.Core.Editor
                     .SetGet(false)
                     .SetValue($"new Dictionary<string, {rowName}>()");
             dictProp.Modifier = GenBasic.modifier.Protected;
+            
+            var listProp =
+                genClass
+                    .AddProperty("_table", $"List<{rowName}>")
+                    .SetSet(false)
+                    .SetGet(false)
+                    .SetValue($"new List<{rowName}>()");
+            listProp.Modifier = GenBasic.modifier.Protected;
 
             var middleName = new DirectoryInfo(Path.GetDirectoryName(path)).Name;
             middleName = CsvConfig.DynamicDirectory.EndsWith(middleName)
@@ -200,6 +208,13 @@ namespace BigHead.Csv.Core.Editor
                 .AddDetail("_dict.TryGetValue(key, out var value);")
                 .AddDetail("return value;")
                 .AddParam("string", "key");
+            
+            genClass
+                .AddFoo("GetRowByKey", rowName)
+                .AddDetail("var key = string.Join(\"&&\",uniKeys);") 
+                .AddDetail("_dict.TryGetValue(key, out var value);")
+                .AddDetail("return value;")
+                .AddParam("params object[]", "uniKeys");
 
             genClass
                 .AddFoo("GetRowByKey", rowName)
@@ -207,11 +222,16 @@ namespace BigHead.Csv.Core.Editor
                 .AddDetail("_dict.TryGetValue(key, out var value);")
                 .AddDetail("return value;")
                 .AddParam("int", "id");
+            
+            genClass
+                .AddFoo("GetTable", $"List<{rowName}>")
+                .AddDetail("return _table;");
 
             genClass
                 .AddFoo("CustomerRowHandler", "void")
                 .SetVirtual(true)
-                .AddDetail("_dict.Add(key, row);")
+                .AddDetail("_dict.Add(key.Trim(), row);")
+                .AddDetail("_table.Add(row);")
                 .AddParam("string", "key")
                 .AddParam(rowName, "row");
 
