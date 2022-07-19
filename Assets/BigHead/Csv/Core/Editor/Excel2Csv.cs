@@ -143,8 +143,20 @@ namespace BigHead.Csv.Core.Editor
                     var all = oldData.Keys.Where(key =>
                     {
                         if (!key.StartsWith(excelName)) return false;
-                        return !string.IsNullOrEmpty(Path.GetExtension(key)) || 
-                               Equals(excelName.Split('$')[0], excelName);
+
+                        if (string.Equals(key, fileNameWithExtension)) return true;
+
+                        var array = key.Split('$').ToArray();
+                        var builder = new StringBuilder();
+                        for (int i = 0; i < array.Length - 1; i++)
+                        {
+                            builder.Append(array[i]);
+                        }
+
+                        if (string.Equals(excelName, builder.ToString()))
+                            return true;
+
+                        return false;
                     }).ToList();
 
                     foreach (var key in all)
