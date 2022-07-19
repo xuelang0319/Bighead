@@ -96,8 +96,12 @@ namespace BigHead.Csv.Core
             switch (type)
             {
                 case "int":
+                case "Uni:int":
+                case "UNI:int":
                     return $"ToInt({value})";
                 case "string":
+                case "Uni:string":
+                case "UNI:string":
                     return value;
                 case "bool":
                     return $"bool.Parse({value})";
