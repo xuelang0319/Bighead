@@ -250,7 +250,10 @@ namespace BigHead.Csv.Core.Editor
                                     }
 
                                     if (col == lastColIndex && row != rows.Count - 1)
+                                    {
                                         rowBuilder.AppendLine();
+                                        break;
+                                    }
                                 }
                                 
                                 var rowArray = rowBuilder.ToString().Split(',');
